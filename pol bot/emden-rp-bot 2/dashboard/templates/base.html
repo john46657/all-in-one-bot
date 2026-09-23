@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Emden RP Dashboard{% endblock %}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: #1a1d23;
+            color: #e6e6e6;
+            margin: 0;
+        }
+        nav {
+            background: #22252d;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        nav a {
+            color: #d0d0d0;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 15px;
+        }
+        nav a:hover { color: #fff; }
+        .brand { font-weight: 700; color: #5865f2; font-size: 18px; }
+        main { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        h1 { font-size: 24px; margin-bottom: 20px; }
+        h2 { font-size: 18px; margin-top: 30px; color: #b9bbbe; }
+        .card {
+            background: #22252d;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #333; font-size: 14px; }
+        th { color: #999; font-weight: 600; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-gruen { background: #2ecc7133; color: #2ecc71; }
+        .badge-gelb { background: #f1c40f33; color: #f1c40f; }
+        .badge-rot { background: #e74c3c33; color: #e74c3c; }
+        .flash {
+            background: #e74c3c22;
+            border: 1px solid #e74c3c;
+            color: #f5a4a4;
+            padding: 10px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+        input[type=text] {
+            width: 100%;
+            padding: 8px 10px;
+            background: #1a1d23;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+        }
+        label { font-size: 13px; color: #999; display: block; margin-bottom: 4px; margin-top: 14px; }
+        button, .btn {
+            background: #5865f2;
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        button:hover, .btn:hover { background: #4752c4; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div>
+            <span class="brand">🚓 Emden RP</span>
+            {% if session.user %}
+            <a href="{{ url_for('uebersicht') }}">Übersicht</a>
+            <a href="{{ url_for('einstellungen') }}">Einstellungen</a>
+            {% endif %}
+        </div>
+        {% if session.user %}
+        <a href="{{ url_for('logout') }}">Ausloggen</a>
+        {% endif %}
+    </nav>
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% for m in messages %}
+                <div class="flash">{{ m }}</div>
+            {% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -1,6 +1,6 @@
-.DS_Store
-**/.git_alt/
 __pycache__/
 *.py[cod]
 .env
+*.db
+.DS_Store
 node_modules/

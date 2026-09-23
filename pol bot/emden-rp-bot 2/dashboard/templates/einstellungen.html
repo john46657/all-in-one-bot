@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Einstellungen</h1>
+<p style="color:#999;">Channel- und Rollennamen müssen exakt so geschrieben sein wie auf eurem Discord-Server.
+Änderungen gelten sofort, ohne dass der Bot neu gestartet werden muss.</p>
+
+<form method="POST">
+    <div class="card">
+        <h2 style="margin-top:0;">Channels</h2>
+        {% for key, s in settings.items() %}
+            {% if key.startswith("channel_") %}
+            <label>{{ s.label }}</label>
+            <input type="text" name="{{ key }}" value="{{ s.wert }}">
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        <h2 style="margin-top:0;">Rollen</h2>
+        {% for key, s in settings.items() %}
+            {% if key.startswith("rolle_") %}
+            <label>{{ s.label }}</label>
+            <input type="text" name="{{ key }}" value="{{ s.wert }}">
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <button type="submit">Speichern</button>
+</form>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Übersicht</h1>
+
+{% if gefahrenstatus_aktuell %}
+{% set stufe = gefahrenstufen[gefahrenstatus_aktuell.status] %}
+<div class="card">
+    <h2 style="margin-top:0;">Aktueller Gefahrenstatus</h2>
+    <span class="badge badge-{{ gefahrenstatus_aktuell.status }}">{{ stufe.emoji }} {{ stufe.label }}</span>
+    {% if gefahrenstatus_aktuell.grund %}<p style="margin-top:10px; color:#ccc;">Grund: {{ gefahrenstatus_aktuell.grund }}</p>{% endif %}
+</div>
+{% endif %}
+
+<div class="card">
+    <h2 style="margin-top:0;">Kennzahlen</h2>
+    <table>
+        <tr><td>Aktive Fahndungen</td><td>{{ fahndungen_aktiv|length }}</td></tr>
+        <tr><td>GSG9-Einsatzberichte gesamt</td><td>{{ gsg9_einsaetze }}</td></tr>
+        <tr><td>Personen auf der Funk-Whitelist</td><td>{{ funk_whitelist_anzahl }}</td></tr>
+    </table>
+</div>
+
+<div class="card">
+    <h2 style="margin-top:0;">Top Dienstzeiten</h2>
+    <table>
+        <tr><th>User-ID</th><th>Schichten</th><th>Gesamtzeit</th></tr>
+        {% for row in dienstzeiten %}
+        <tr>
+            <td>{{ row.user_id }}</td>
+            <td>{{ row.schichten }}</td>
+            <td>{{ format_dauer(row.gesamt) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" style="color:#777;">Noch keine Dienstzeiten erfasst.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2 style="margin-top:0;">Meiste Dienstberichte</h2>
+    <table>
+        <tr><th>User-ID</th><th>Anzahl Berichte</th></tr>
+        {% for row in dienstberichte_anzahl %}
+        <tr><td>{{ row.user_id }}</td><td>{{ row.anzahl }}</td></tr>
+        {% else %}
+        <tr><td colspan="2" style="color:#777;">Noch keine Dienstberichte erfasst.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2 style="margin-top:0;">Ausbildungen</h2>
+    <table>
+        <tr><th>Rekrut-ID</th><th>Ausbilder-ID</th><th>Status</th></tr>
+        {% for row in ausbildungen %}
+        <tr>
+            <td>{{ row.rekrut_id }}</td>
+            <td>{{ row.ausbilder_id }}</td>
+            <td>{{ "✅ Abgeschlossen" if row.abgeschlossen else "🕐 Läuft" }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" style="color:#777;">Keine laufenden Ausbildungen.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% if fahndungen_aktiv %}
+<div class="card">
+    <h2 style="margin-top:0;">Aktive Fahndungen</h2>
+    <table>
+        <tr><th>Name</th><th>Grund</th><th>Dringlichkeit</th></tr>
+        {% for f in fahndungen_aktiv %}
+        <tr><td>{{ f.name }}</td><td>{{ f.grund }}</td><td>{{ f.dringlichkeit }}</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+<p style="color:#666; font-size:12px; margin-top:30px;">
+    Hinweis: User-IDs werden hier als Zahl angezeigt (nicht als Discord-Name), da das Dashboard
+    unabhängig vom Bot läuft. Über Rechtsklick → "ID kopieren" in Discord (Entwicklermodus)
+    lässt sich das schnell zuordnen.
+</p>
+{% endblock %}
