@@ -1,0 +1,57 @@
+{
+  "embeds": [
+    {
+      "title": "📖 RP-Regeln",
+      "description": "Diese Regeln gelten zusätzlich zu den Serverregeln für das Roleplay.",
+      "color": 15105570,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "🎭 Rolle bleiben",
+          "value": "Dein Charakter bleibt in seiner Rolle. Kein OOC-Chat im RP.",
+          "inline": false
+        },
+        {
+          "name": "💀 Character Kill (CK)",
+          "value": "Ein CK bedarf der Zustimmung aller Beteiligten und der Fraktionsverwaltung.",
+          "inline": false
+        },
+        {
+          "name": "🚫 Metagaming",
+          "value": "Keine Nutzung von OOC-Informationen im RP.",
+          "inline": false
+        },
+        {
+          "name": "🚫 Powergaming",
+          "value": "Keine unrealistischen Aktionen oder erzwungener Erfolg ohne Mitspielerreaktion.",
+          "inline": false
+        },
+        {
+          "name": "⏱️ New Life Rule",
+          "value": "Nach einem CK/AK beginnst du ein neues Leben ohne Erinnerung an vorherige RP-Situationen.",
+          "inline": false
+        },
+        {
+          "name": "🔫 Waffenregeln",
+          "value": "Waffen sind an Fraktionsvorgaben und Gesetze gebunden.",
+          "inline": false
+        },
+        {
+          "name": "🚓 Fraktionsregeln",
+          "value": "Jede Fraktion hat interne Vorgaben – diese sind verbindlich.",
+          "inline": false
+        },
+        {
+          "name": "⚠️ Meldungen",
+          "value": " Regelverstöße im RP meldest du über <#TICKET> (Kategorie 'Spieler melden').",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

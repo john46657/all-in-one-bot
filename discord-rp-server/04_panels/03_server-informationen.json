@@ -1,0 +1,57 @@
+{
+  "embeds": [
+    {
+      "title": "📋 Serverinformationen",
+      "description": "Alles Wichtige zu unserem Server auf einen Blick.",
+      "color": 5793266,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "🌙 Server",
+          "value": "NovaRP – RP, Gaming & Community",
+          "inline": true
+        },
+        {
+          "name": "🌐 Sprache",
+          "value": "Deutsch",
+          "inline": true
+        },
+        {
+          "name": "📅 Gegründet",
+          "value": "2026",
+          "inline": true
+        },
+        {
+          "name": "🤖 Bots",
+          "value": "GalaxyBot, Appy, UnbelievaBoat, Wick, Carl-bot, Arcane, Statbot, TempVoice, MonitoRSS",
+          "inline": false
+        },
+        {
+          "name": "🎭 RP-Bereiche",
+          "value": "Polizei · Feuerwehr · Rettungsdienst · Justiz · Regierung · Unternehmen",
+          "inline": false
+        },
+        {
+          "name": "💰 Währung",
+          "value": "Euro (€) – verwaltet von UnbelievaBoat",
+          "inline": false
+        },
+        {
+          "name": "📈 Level",
+          "value": "Level-Rollen ab Level 5, 10, 20 und 30",
+          "inline": false
+        },
+        {
+          "name": "🎫 Support",
+          "value": "Tickets in <#TICKET> – nur Ersteller und Team sehen den Verlauf",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

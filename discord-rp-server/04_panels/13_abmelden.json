@@ -1,0 +1,48 @@
+{
+  "embeds": [
+    {
+      "title": "🚪 Team-Abmeldung",
+      "description": "Du bist für einige Tage nicht da? Melde dich ab, damit das Team Bescheid weiß.\n\nMit `/abmelden jetzt` kannst du dich abmelden. Nach Ablauf deiner Abmeldung wird alles automatisch zurückgesetzt.",
+      "color": 15965202,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "fields": [
+        {
+          "name": "✍️ Abmelden",
+          "value": "`/abmelden jetzt` – öffnet das Formular",
+          "inline": false
+        },
+        {
+          "name": "❌ Beenden",
+          "value": "`/abmelden entfernen` – Abmeldung vorzeitig beenden",
+          "inline": false
+        },
+        {
+          "name": "📋 Übersicht",
+          "value": "`/abmelden liste` – wer ist aktuell abwesend?",
+          "inline": false
+        },
+        {
+          "name": "👤 Berechtigung",
+          "value": "Nur ausgewählte Team-Rollen (Admin: `/abmelden setup`)",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "components": [
+    {
+      "type": 1,
+      "components": [
+        {
+          "type": 2,
+          "style": 1,
+          "label": "🚪 Jetzt abmelden",
+          "custom_id": "abmelden_jetzt",
+          "emoji": "🚪"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "embeds": [
+    {
+      "title": "📜 Serverregeln",
+      "description": "Diese Regeln gelten für **alle** Mitglieder – ohne Ausnahme.",
+      "color": 15158332,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "1️⃣ Respektvoller Umgang",
+          "value": "Jeder wird mit Respekt behandelt. Diskriminierung, Beleidigungen oder herabwürdigendes Verhalten werden nicht toleriert.",
+          "inline": false
+        },
+        {
+          "name": "2️⃣ Kein Spam",
+          "value": "Kein Spam, kein Massen-Erwähnen, keine unerwünschte Werbung in DMs.",
+          "inline": false
+        },
+        {
+          "name": "3️⃣ Keine unerlaubte Werbung",
+          "value": "Werbung nur mit ausdrücklicher Erlaubnis der Serverleitung.",
+          "inline": false
+        },
+        {
+          "name": "4️⃣ Kein Mobbing",
+          "value": "Mobbing, Ausgrenzung oder gezieltes Belästigen führen zu einem sofortigen Ausschluss.",
+          "inline": false
+        },
+        {
+          "name": "5️⃣ Keine Belästigung",
+          "value": "Keine sexuellen, rassistischen oder anderweitig belästigenden Inhalte oder Kommentare.",
+          "inline": false
+        },
+        {
+          "name": "6️⃣ Keine NSFW-Inhalte",
+          "value": "NSFW-Inhalte sind strikt verboten – in keinem Channel.",
+          "inline": false
+        },
+        {
+          "name": "7️⃣ Keine Ausnutzung von Bots",
+          "value": "Bugs und Exploits sind sofort zu melden, nicht auszunutzen.",
+          "inline": false
+        },
+        {
+          "name": "8️⃣ Keine Regelumgehung",
+          "value": "Umfahrungen, Zweitaccounts oder Ausreden zählen als Verstöße.",
+          "inline": false
+        },
+        {
+          "name": "9️⃣ Keine Manipulation der Economy",
+          "value": "Jeder Versuch, das Wirtschaftssystem zu manipulieren, wird bestraft.",
+          "inline": false
+        },
+        {
+          "name": "🔟 Keine Weitergabe interner Informationen",
+          "value": "Intererne Team- oder Fraktionsinfos bleiben intern.",
+          "inline": false
+        },
+        {
+          "name": "1️⃣1️⃣ Teamentscheidungen respektieren",
+          "value": "Anweisungen des Teams sind zu befolgen. Beschwerden gehen über das Ticket-System.",
+          "inline": false
+        },
+        {
+          "name": "1️⃣2️⃣ RP-Regeln beachten",
+          "value": "Für das Roleplay gelten zusätzlich die Regeln in <#RPREGELN>.",
+          "inline": false
+        },
+        {
+          "name": "1️⃣3️⃣ Discord-Nutzungsbedingungen",
+          "value": "Die Discord-AGB und -Community-Richtlinien gelten in vollem Umfang.",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

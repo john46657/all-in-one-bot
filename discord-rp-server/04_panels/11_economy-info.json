@@ -1,0 +1,57 @@
+{
+  "embeds": [
+    {
+      "title": "💰 Economy – Informationen",
+      "description": "Unsere Währung ist der **Euro (€)**. Verwaltet von UnbelievaBoat – die wichtigsten Befehle:",
+      "color": 15965202,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "💰 Kontostand",
+          "value": "`/balance` (oder `/bal`) – zeigt Bargeld und Bank",
+          "inline": false
+        },
+        {
+          "name": "💼 Jobs",
+          "value": "`/jobs` – alle Jobs · `/job <name>` – Job annehmen",
+          "inline": false
+        },
+        {
+          "name": "🏪 Shop",
+          "value": "`/shop` – Items ansehen · `/buy <item>` – kaufen · `/inventory` – Inventar",
+          "inline": false
+        },
+        {
+          "name": "💸 Überweisungen",
+          "value": "`/pay <@user> <betrag>` – Bargeld · `/bank deposit/withdraw` – Bank",
+          "inline": false
+        },
+        {
+          "name": "🎁 Daily",
+          "value": "`/daily` – tägliches Geschenk mit Streak-Bonus",
+          "inline": false
+        },
+        {
+          "name": "🏆 Ranking",
+          "value": "`/leaderboard` – die reichsten Mitglieder",
+          "inline": false
+        },
+        {
+          "name": "🏛️ Fraktions-Einkommen",
+          "value": "Polizei 2.500 € · Feuerwehr 2.400 € · Rettungsdienst 2.300 € · Justiz 3.000 € · Regierung 3.200 € · Unternehmen variabel",
+          "inline": false
+        },
+        {
+          "name": "👤 Zivilisten",
+          "value": "Allgemeine Jobs mit variablem Einkommen",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

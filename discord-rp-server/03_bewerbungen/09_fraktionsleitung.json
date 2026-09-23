@@ -1,0 +1,267 @@
+{
+  "form_id": "09_fraktionsleitung",
+  "title": "🎭 Fraktionsleitung – Bewerbung",
+  "role_on_accept": "🎭 Fraktionsverwaltung",
+  "min_age": 18,
+  "requires_interview": true,
+  "status_workflow": [
+    "🟡 In Prüfung",
+    "🔵 Rückfrage",
+    "🟠 Vorstellungsgespräch",
+    "🟢 Angenommen",
+    "🔴 Abgelehnt",
+    "⚫ Zurückgezogen"
+  ],
+  "requirements": [
+    "Mindestalter: 18",
+    "Team-Erfahrung",
+    "Führungserfahrung",
+    "Konfliktlösungskompetenz",
+    "gute Organisation",
+    "regelmäßige Aktivität",
+    "Vorstellungsgespräch"
+  ],
+  "word_limits": {
+    "textarea_min": 50,
+    "textarea_max": 250,
+    "note": "Gilt für alle Freitext-Pflichtfelder ohne Ausnahme."
+  },
+  "fields": [
+    {
+      "id": "discord_name",
+      "label": "Discord-Name",
+      "type": "text",
+      "required": true,
+      "note": "Keine Wortbegrenzung"
+    },
+    {
+      "id": "discord_id",
+      "label": "Discord-ID",
+      "type": "text",
+      "required": true,
+      "note": "Rechtsklick auf dich selbst → ID kopieren"
+    },
+    {
+      "id": "alter",
+      "label": "Alter",
+      "type": "select",
+      "required": true,
+      "options": [
+        "unter 16",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21-25",
+        "26-30",
+        "31-40",
+        "über 40"
+      ]
+    },
+    {
+      "id": "zeitzone",
+      "label": "Zeitzone",
+      "type": "select",
+      "required": true,
+      "options": [
+        "MEZ (UTC+1)",
+        "MESZ (UTC+2)",
+        "GMT (UTC+0)",
+        "CET andere",
+        "Europa andere",
+        "Nordamerika",
+        "Südamerika",
+        "Asien",
+        "Australien/Ozeanien",
+        "Andere"
+      ]
+    },
+    {
+      "id": "online_zeit",
+      "label": "Online-Zeit pro Woche",
+      "type": "select",
+      "required": true,
+      "options": [
+        "unter 5 Stunden",
+        "5-10 Stunden",
+        "11-15 Stunden",
+        "16-20 Stunden",
+        "21-30 Stunden",
+        "über 30 Stunden"
+      ]
+    },
+    {
+      "id": "online_zeiten",
+      "label": "Übliche Online-Zeiten",
+      "type": "select",
+      "required": true,
+      "multiple": true,
+      "options": [
+        "Mo Vormittag",
+        "Mo Nachmittag",
+        "Mo Abend",
+        "Mo Nacht",
+        "Di Vormittag",
+        "Di Nachmittag",
+        "Di Abend",
+        "Di Nacht",
+        "Mi Vormittag",
+        "Mi Nachmittag",
+        "Mi Abend",
+        "Mi Nacht",
+        "Do Vormittag",
+        "Do Nachmittag",
+        "Do Abend",
+        "Do Nacht",
+        "Fr Vormittag",
+        "Fr Nachmittag",
+        "Fr Abend",
+        "Fr Nacht",
+        "Sa Vormittag",
+        "Sa Nachmittag",
+        "Sa Abend",
+        "Sa Nacht",
+        "So Vormittag",
+        "So Nachmittag",
+        "So Abend",
+        "So Nacht"
+      ]
+    },
+    {
+      "id": "rp_erfahrung",
+      "label": "RP-Erfahrung",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "team_erfahrung",
+      "label": "Team-/Fraktionserfahrung",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "motivation",
+      "label": "Motivation",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "staerken",
+      "label": "Stärken",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "schwaechen",
+      "label": "Schwächen",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "kritik",
+      "label": "Umgang mit Kritik",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "konflikte",
+      "label": "Umgang mit Konflikten",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "regeln",
+      "label": "Regelverständnis",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "frage_1",
+      "label": "Frage 1: Warum möchtest du Fraktionsleitung werden?",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "frage_2",
+      "label": "Frage 2: Welche Führungserfahrung hast du?",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "frage_3",
+      "label": "Frage 3: Welche Fraktion möchtest du leiten und warum?",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "frage_4",
+      "label": "Frage 4: Wie würdest du eine Fraktion organisieren?",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "frage_5",
+      "label": "Frage 5: Wie löst du interne Fraktionskonflikte?",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "frage_6",
+      "label": "Frage 6: Wie motivierst du Fraktionsmitglieder?",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "frage_7",
+      "label": "Frage 7: Wie würdest du ein neues Fraktionsmitglied einarbeiten?",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250
+    },
+    {
+      "id": "fallbeispiel",
+      "label": "Fallbeispiel",
+      "type": "textarea",
+      "required": true,
+      "min_words": 50,
+      "max_words": 250,
+      "note": "Zwei Spieler beschuldigen sich gegenseitig eines Regelverstoßes. Beide behaupten, im Recht zu sein. Beschreibe Schritt für Schritt, wie du die Situation lösen würdest."
+    },
+    {
+      "id": "bestaetigung",
+      "label": "Ich bestätige, dass meine Angaben korrekt und vollständig sind.",
+      "type": "checkbox",
+      "required": true
+    }
+  ]
+}

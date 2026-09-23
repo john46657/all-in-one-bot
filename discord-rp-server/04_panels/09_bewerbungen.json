@@ -1,0 +1,113 @@
+{
+  "embeds": [
+    {
+      "title": "📋 Bewerbungen",
+      "description": "Du möchtest Teil unseres Teams oder einer RP-Fraktion werden?\n\nWähle unten den gewünschten Bereich aus und fülle die Bewerbung vollständig und ehrlich aus.\n\nBitte beachte die Mindestanforderungen und die Vorgaben für die Antworten.\n\n**Wähle deinen Bereich über das Select-Menü unten.**",
+      "color": 15844367,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "📝 Wortvorgaben",
+          "value": "Jede Freitextantwort: **50–250 Wörter** – keine Ausnahmen.",
+          "inline": false
+        },
+        {
+          "name": "📋 Mindestanforderungen",
+          "value": "Siehe <#BEWERBUNGSINFO>",
+          "inline": false
+        },
+        {
+          "name": "📊 Status",
+          "value": "Deinen Bewerbungsstatus siehst du in <#BEWERBUNGSSTATUS>",
+          "inline": false
+        },
+        {
+          "name": "🎫 Fragen?",
+          "value": "Stelle sie in einem Ticket in <#TICKET>",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png",
+  "components": [
+    {
+      "type": 1,
+      "components": [
+        {
+          "type": 3,
+          "custom_id": "appy_application_select",
+          "placeholder": "Wähle deinen Bewerbungsbereich ...",
+          "min_values": 1,
+          "max_values": 1,
+          "options": [
+            {
+              "label": "Polizei",
+              "value": "01_polizei",
+              "emoji": "👮",
+              "description": "Bewerbung ab 16 Jahren"
+            },
+            {
+              "label": "Feuerwehr",
+              "value": "02_feuerwehr",
+              "emoji": "🚒",
+              "description": "Bewerbung ab 16 Jahren"
+            },
+            {
+              "label": "Rettungsdienst",
+              "value": "03_rettungsdienst",
+              "emoji": "🚑",
+              "description": "Bewerbung ab 16 Jahren"
+            },
+            {
+              "label": "Justiz",
+              "value": "04_justiz",
+              "emoji": "⚖️",
+              "description": "Bewerbung ab 18 Jahren"
+            },
+            {
+              "label": "Support",
+              "value": "05_support",
+              "emoji": "🎫",
+              "description": "Bewerbung ab 16 Jahren"
+            },
+            {
+              "label": "Moderator",
+              "value": "06_moderator",
+              "emoji": "🔨",
+              "description": "Bewerbung ab 16 Jahren"
+            },
+            {
+              "label": "Administrator",
+              "value": "07_administrator",
+              "emoji": "🛡️",
+              "description": "Bewerbung ab 18 Jahren + Gespräch"
+            },
+            {
+              "label": "Teamleitung",
+              "value": "08_teamleitung",
+              "emoji": "👑",
+              "description": "Bewerbung ab 18 Jahren + Gespräch"
+            },
+            {
+              "label": "Fraktionsleitung",
+              "value": "09_fraktionsleitung",
+              "emoji": "🎭",
+              "description": "Bewerbung ab 18 Jahren + Gespräch"
+            },
+            {
+              "label": "Unternehmen",
+              "value": "10_unternehmen",
+              "emoji": "🏢",
+              "description": "Bewerbung ab 16 Jahren"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

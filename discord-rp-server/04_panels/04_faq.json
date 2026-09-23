@@ -1,0 +1,57 @@
+{
+  "embeds": [
+    {
+      "title": "❓ Häufig gestellte Fragen",
+      "description": "Wenn deine Frage hier nicht beantwortet wird, öffne gerne ein Ticket in <#TICKET>.",
+      "color": 5793266,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "Wie werde ich Mitglied?",
+          "value": "Les die Regeln in <#REGELN>, verifiziere dich und du erhältst automatisch die Mitgliederrolle.",
+          "inline": false
+        },
+        {
+          "name": "Wie bewerbe ich mich?",
+          "value": "In <#BEWERBUNGEN> wähst du den gewünschten Bereich aus und füllst das Formular vollständig aus.",
+          "inline": false
+        },
+        {
+          "name": "Was muss ich bei Bewerbungen beachten?",
+          "value": "Jede Freitextantwort muss **50–250 Wörter** lang sein. Die Mindestanforderungen stehen in <#BEWERBUNGSINFO>.",
+          "inline": false
+        },
+        {
+          "name": "Wie lange dauert eine Bewerbung?",
+          "value": "In der Regel 3–7 Tage. Du siehst deinen Status in <#BEWERBUNGSSTATUS>.",
+          "inline": false
+        },
+        {
+          "name": "Wie verdiene ich Geld?",
+          "value": "Über Jobs, Daily Rewards, Fraktions-Einkommen oder den Shop. Siehe <#ECONOMYINFO>.",
+          "inline": false
+        },
+        {
+          "name": "Wie steigen ich im Level?",
+          "value": "Aktivität im Chat und in Voice-Channels bringt XP. Siehe <#ECONOMYRANKING>.",
+          "inline": false
+        },
+        {
+          "name": "Wie erstelle ich einen eigenen Voice-Channel?",
+          "value": "Trete einfach `➕・Raum-erstellen` bei – TempVoice macht den Rest.",
+          "inline": false
+        },
+        {
+          "name": "Wie melde ich einen Spieler oder Bug?",
+          "value": "Über die Tickets in <#TICKET> – dort gibt es passende Kategorien.",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

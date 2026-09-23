@@ -1,0 +1,47 @@
+{
+  "embeds": [
+    {
+      "title": "👋 Willkommen auf unserem Server!",
+      "description": "Schön, dass du da bist.\n\nBitte lies dir zuerst unsere **Regeln** und **Serverinformationen** durch.\n\nDanach kannst du dich in der Community vorstellen, am RP teilnehmen, eine Bewerbung einreichen oder dich mit anderen Mitgliedern austauschen.\n\n**Viel Spaß auf unserem Server!**",
+      "color": 5793266,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "📜 Regeln",
+          "value": "<#REGELN>",
+          "inline": true
+        },
+        {
+          "name": "📋 Serverinformationen",
+          "value": "<#SERVERINFO>",
+          "inline": true
+        },
+        {
+          "name": "🎭 RP-Infos",
+          "value": "<#RPINFOS>",
+          "inline": true
+        },
+        {
+          "name": "📋 Bewerbungen",
+          "value": "<#BEWERBUNGEN>",
+          "inline": true
+        },
+        {
+          "name": "🎫 Support",
+          "value": "<#TICKET>",
+          "inline": true
+        },
+        {
+          "name": "❓ FAQ",
+          "value": "<#FAQ>",
+          "inline": true
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

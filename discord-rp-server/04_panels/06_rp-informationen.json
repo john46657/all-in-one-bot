@@ -1,0 +1,57 @@
+{
+  "embeds": [
+    {
+      "title": "🎭 Roleplay – Informationen",
+      "description": "Unser RP findet in einer lebendigen Stadt statt. Hier die wichtigsten Grundlagen.",
+      "color": 3066993,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "🌆 Setting",
+          "value": "Moderne Stadt mit Polizei, Feuerwehr, Rettungsdienst, Justiz, Regierung und Wirtschaft.",
+          "inline": false
+        },
+        {
+          "name": "🎭 Fraktionen",
+          "value": "Polizei · Feuerwehr · Rettungsdienst · Justiz · Regierung · Unternehmen – jede mit eigenem Bereich und eigenem Einkommen.",
+          "inline": false
+        },
+        {
+          "name": "📝 Charakter",
+          "value": "Erstelle deinen Charakter in <#CHARAKTERERSTELLUNG> nach der Vorlage.",
+          "inline": false
+        },
+        {
+          "name": "🏠 Immobilien",
+          "value": "Immobilien können erworben und bewohnt werden. Details in <#IMMOBILIEN>.",
+          "inline": false
+        },
+        {
+          "name": "🚗 Fahrzeuge",
+          "value": "Fahrzeuge sind über das Wirtschaftssystem verfügbar. Details in <#FAHRZEUGE>.",
+          "inline": false
+        },
+        {
+          "name": "💰 Einkommen",
+          "value": "Fraktionen erhalten ein regelmäßiges Einkommen, Zivilisten verdienen über Jobs.",
+          "inline": false
+        },
+        {
+          "name": "📅 Events",
+          "value": "Regelmäßige RP-Events – Ankündigungen in <#RPEVENTS>.",
+          "inline": false
+        },
+        {
+          "name": "📖 Regeln",
+          "value": "Für alles RP gilt zusätzlich: <#RPREGELN>",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

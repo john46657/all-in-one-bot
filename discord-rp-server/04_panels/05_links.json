@@ -1,0 +1,67 @@
+{
+  "embeds": [
+    {
+      "title": "🔗 Wichtige Links",
+      "description": "Alle Verlinkungen an zentraler Stelle.",
+      "color": 3447003,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "📜 Regeln",
+          "value": "<#REGELN>",
+          "inline": true
+        },
+        {
+          "name": "🎭 RP-Regeln",
+          "value": "<#RPREGELN>",
+          "inline": true
+        },
+        {
+          "name": "📋 Bewerbungen",
+          "value": "<#BEWERBUNGEN>",
+          "inline": true
+        },
+        {
+          "name": "🎫 Ticket erstellen",
+          "value": "<#TICKET>",
+          "inline": true
+        },
+        {
+          "name": "💰 Economy",
+          "value": "<#ECONOMYINFO>",
+          "inline": true
+        },
+        {
+          "name": "💼 Fraktionen",
+          "value": "<#FRAKTIONEN>",
+          "inline": true
+        },
+        {
+          "name": "📷 Instagram",
+          "value": "https://instagram.com/...",
+          "inline": true
+        },
+        {
+          "name": "▶️ YouTube",
+          "value": "https://youtube.com/...",
+          "inline": true
+        },
+        {
+          "name": "🎮 Twitch",
+          "value": "https://twitch.tv/...",
+          "inline": true
+        },
+        {
+          "name": "🌐 Website",
+          "value": "https://... ",
+          "inline": true
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

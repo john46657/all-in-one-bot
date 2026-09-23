@@ -1,0 +1,52 @@
+{
+  "embeds": [
+    {
+      "title": "💼 Unsere Fraktionen",
+      "description": "Wähle deinen Weg. Bewerbungen für alle Fraktionen in <#BEWERBUNGEN>.",
+      "color": 10181046,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "👮 Polizei",
+          "value": "Gesetz und Ordnung. Einkommen: 2.500 € – Bewerbung ab 16 Jahren.",
+          "inline": false
+        },
+        {
+          "name": "🚒 Feuerwehr",
+          "value": "Retten, Löschen, Bergen. Einkommen: 2.400 € – Bewerbung ab 16 Jahren.",
+          "inline": false
+        },
+        {
+          "name": "🚑 Rettungsdienst",
+          "value": "Leben retten. Einkommen: 2.300 € – Bewerbung ab 16 Jahren.",
+          "inline": false
+        },
+        {
+          "name": "⚖️ Justiz",
+          "value": "Recht und Würde. Einkommen: 3.000 € – Bewerbung ab 18 Jahren.",
+          "inline": false
+        },
+        {
+          "name": "🏛️ Regierung",
+          "value": "Stadt lenken. Einkommen: 3.200 € – Zugang nur über Ernennung.",
+          "inline": false
+        },
+        {
+          "name": "💼 Unternehmen",
+          "value": "Wirtschaft und Karriere. Einkommen: variabel – eigene Unternehmen möglich.",
+          "inline": false
+        },
+        {
+          "name": "👤 Zivilist",
+          "value": "Freier Bürger mit Zugang zu allen allgemeinen Jobs.",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

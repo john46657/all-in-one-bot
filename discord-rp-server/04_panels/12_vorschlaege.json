@@ -1,0 +1,32 @@
+{
+  "embeds": [
+    {
+      "title": "💡 Vorschläge",
+      "description": "Hast du eine Idee für den Server? Teile sie mit uns!\n\nNutze den Befehl `/vorschlag` oder klicke auf den Button unten.",
+      "color": 15277667,
+      "footer": {
+        "text": "🌌 NovaRP • Community & Roleplay"
+      },
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {
+          "name": "👍 Abstimmung",
+          "value": "Die Community stimmt über jeden Vorschlag ab.",
+          "inline": false
+        },
+        {
+          "name": "👀 Prüfung",
+          "value": "Das Team nimmt erfolgreiche Vorschläge in den <#CHANGELOG> auf.",
+          "inline": false
+        },
+        {
+          "name": "⚠️ Wichtig",
+          "value": "Konstruktive Formulierung. Beleidigende Vorschläge werden gelöscht.",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "username": "NovaRP Panels",
+  "avatar_url": "https://i.imgur.com/placeholder.png"
+}

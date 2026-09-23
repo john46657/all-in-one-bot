@@ -1,0 +1,6 @@
+.DS_Store
+pol bot/
+__pycache__/
+*.py[cod]
+.env
+node_modules/
