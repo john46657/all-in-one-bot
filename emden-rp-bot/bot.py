@@ -31,9 +31,16 @@ class EmdenRPBot(commands.Bot):
         init_db()
         log.info("Datenbank initialisiert.")
 
-        # Alle Cogs (Module) laden
+        # Alle Cogs (Module) laden.
+        #
+        # WICHTIG: Dieser Bot ist jetzt der *Fraktions-Bot* (Polizei/Emden RP).
+        # Übergreifende Systeme werden von anderen Bots übernommen (keine
+        # Überschneidungen, siehe Master-Prompt §1):
+        #   - Bewerbungen   → Appy            (siehe legacy-cogs/bewerbungen.py)
+        #   - Tickets       → GalaxyBot       (siehe legacy-cogs/tickets.py)
+        #   - Abmelden      → GalaxyBot       (siehe legacy-cogs/abmelden.py)
+        # Die Original-Cogs liegen in legacy-cogs/ und werden nicht geladen.
         cogs = [
-            "cogs.bewerbungen",
             "cogs.roblox",
             "cogs.teamliste",
             "cogs.dienst",
@@ -43,8 +50,6 @@ class EmdenRPBot(commands.Bot):
             "cogs.gefahrenstatus",
             "cogs.fahndung",
             "cogs.funk",
-            "cogs.tickets",
-            "cogs.abmelden",
         ]
         for cog in cogs:
             try:

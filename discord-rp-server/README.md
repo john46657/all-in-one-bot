@@ -13,8 +13,9 @@ Jedes System hat **genau eine klar definierte Aufgabe** – keine Überschneidun
 | `02_bots/` | Bot-Matrix + Einrichtungs-Guide für alle 10 Bots |
 | `03_bewerbungen/` | Bewerbungssystem + alle 11 Bewerbungsformulare |
 | `04_panels/` | Discohook-Embed-JSONs für alle Panels |
-| `05_systeme/` | Economy, Level, Tickets, Logs, Sicherheit, Voice, Abmelden |
+| `05_systeme/` | Economy, Level, Tickets, Logs, Sicherheit, Voice, Abwesenheit |
 | `06_texte/` | Regeln, Willkommensnachricht, FAQ, Links |
+| `07_tests/` | Gesamttest-Katalog vor dem Launch |
 
 ---
 

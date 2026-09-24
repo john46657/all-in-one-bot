@@ -1,11 +1,21 @@
-# Emden RP Bot
+# Emden RP Bot – Fraktions-Bot (Polizei)
 
-Ein modularer Discord-Bot für den Emden Polizei-Roleplay-Server. Läuft komplett
+Modularer Discord-Bot für das Emden Polizei-Roleplay. Läuft komplett
 eigenständig innerhalb von Discord, ohne API- oder Webhook-Verbindung zu Roblox.
+
+> **Rolle im Gesamtsystem:** Dieser Bot ist der *Fraktions-Bot* für die Polizei.
+> Übergreifende Systeme werden bewusst **nicht** hier abgebildet (Master-Prompt §1,
+> keine Überschneidungen zwischen Bots):
+> - **Bewerbungen** → Appy
+> - **Tickets** → GalaxyBot
+> - **Team-Abwesenheit** → GalaxyBot (`/abwesenheit panel`)
+>
+> Die früher hier integrierten Cogs liegen in `legacy-cogs/` und werden nicht
+> geladen. Sie können bei Bedarf wieder aktiviert werden, solange GalaxyBot/Appy
+> noch nicht laufen.
 
 ## Funktionen
 
-- 📋 **Bewerbungssystem** – `/bewerbung`
 - 👥 **Teamliste** – automatisch aktualisierte Nachricht, Rangreihenfolge aus Discord-Rollen
 - 🎉 **Beförderungs-/Entlassungs-Nachrichten** – automatisch bei Rollenänderungen, zusätzlich `/entlassen_roblox` per Roblox-Namen (falls die Person nicht mehr im Discord ist, z.B. nach einem Bann)
 - 🔗 **Roblox-Verknüpfung** – `/roblox verknuepfen`, `/roblox info`, `/roblox suchen`
@@ -16,8 +26,6 @@ eigenständig innerhalb von Discord, ohne API- oder Webhook-Verbindung zu Roblox
 - 🚦 **Gefahrenstatus-Panel** – Button-Panel (Grün/Gelb/Rot), `/gefahrenstatus_panel` zum Posten
 - 🚔 **Fahndungssystem** – `/fahndung erstellen`, `/fahndung beenden`, `/fahndung liste`
 - 📻 **Funk-Whitelist** – `/funk whitelist hinzufuegen`, `entfernen`, `entfernen_roblox`, `liste`, `check` (vergibt automatisch die Rolle "Funkberechtigt")
-- 🎫 **Ticket-System** – Button-Panel, `/ticket_panel` zum Posten
-- 🚪 **Abmelden-System (Team)** – `/abmelden jetzt` (Modal), `/abmelden setup` (mehrere berechtigte Rollen per Select-Menü oder Rollen-ID), automatische Rollen-Verwaltung bei Ablauf
 
 ## Einrichtung
 
@@ -35,7 +43,6 @@ eigenständig innerhalb von Discord, ohne API- oder Webhook-Verbindung zu Roblox
 ### 2. Server vorbereiten
 
 Lege folgende **Channels** an (Namen müssen zu `config.py` passen, oder passe die Namen dort an):
-- `bewerbungen-log`
 - `teamliste`
 - `beförderungen`
 - `entlassungen`
@@ -45,8 +52,9 @@ Lege folgende **Channels** an (Namen müssen zu `config.py` passen, oder passe d
 - `gefahrenstatus`
 - `fahndungen`
 - `funk-whitelist-log`
-- `abmeldungen`
-- Kategorie `Tickets`
+
+> Tickets und Abmeldungen werden vom GalaxyBot verwaltet
+> (`🎫 Tickets`-Kategorie bzw. `📅・team-abwesenheit`) und hier nicht mehr benötigt.
 
 Lege außerdem die **Rollen** an, die in `config.py` unter `RANG_REIHENFOLGE`, `ROLLE_LEITUNG`,
 `ROLLE_AUSBILDER`, `ROLLE_GSG9`, `ROLLE_IM_DIENST`, `ROLLE_FUNKBERECHTIGT` und
@@ -73,13 +81,7 @@ python bot.py
 ### 4. Nach dem Start
 
 - `/gefahrenstatus_panel` einmal in `#gefahrenstatus` ausführen, um das Button-Panel zu posten
-- `/ticket_panel` einmal im gewünschten Support-Channel ausführen
 - `/teamliste_aktualisieren` einmal manuell ausführen (danach läuft es automatisch)
-- `/abmelden setup` einmal ausführen und die Rollen auswählen, die sich abmelden dürfen
-  (mehrere möglich; alternativ `/abmelden rolle_hinzufuegen rolle_id:<ID>`)
-
-**Wichtig fürs Abmelden-System:** Die Bot-Rolle muss in der Rollen-Reihenfolge **über**
-der Rolle "Abgemeldet" stehen, sonst kann der Bot sie nicht automatisch vergeben/entfernen.
 
 **Wichtig für Funk-Whitelist & Entlassungen per Roblox-Name:** Damit `/funk whitelist entfernen_roblox`
 und `/entlassen_roblox` funktionieren, muss die Person vorher einmal mit `/roblox verknuepfen`
@@ -186,8 +188,7 @@ emden-rp-bot/
 ├── database.py               # SQLite-Datenbank-Setup
 ├── requirements.txt
 ├── .env.example
-├── cogs/
-│   ├── bewerbungen.py
+├── cogs/                      # Aktive Fraktions-Module
 │   ├── roblox.py
 │   ├── teamliste.py
 │   ├── dienst.py
@@ -196,8 +197,11 @@ emden-rp-bot/
 │   ├── gsg9.py
 │   ├── gefahrenstatus.py
 │   ├── fahndung.py
-│   ├── funk.py
-│   └── tickets.py
+│   └── funk.py
+├── legacy-cogs/               # Inaktive Module (von GalaxyBot/Appy übernommen)
+│   ├── bewerbungen.py             # → Appy
+│   ├── tickets.py                 # → GalaxyBot
+│   └── abmelden.py                # → GalaxyBot (Team-Abwesenheit)
 └── dashboard/                  # Komplett eigenständig deploybar (z.B. auf Cybrancee)
     ├── app.py                    # Flask-Hauptanwendung
     ├── dashboard_config.py       # Liest die .env im dashboard/-Ordner

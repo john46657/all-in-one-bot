@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🌌 GalaxyBot · Test-Dashboard</title>
+<style>
+  :root {
+    --info: #5865F2; --success: #2ECC71; --warn: #F1C40F; --danger: #E74C3C;
+    --neutral: #95A5A6; --purple: #9B59B6; --orange: #E67E22; --blue: #3498DB;
+    --bg: #0f1117; --panel: #1a1d29; --panel2: #22263a; --text: #e8e9f0; --muted: #9aa0b4;
+    --border: #2c3047;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font-family: "Segoe UI", system-ui, -apple-system, sans-serif; font-size: 15px; }
+  header { background: linear-gradient(135deg, #2a2f4a, #1a1d29); padding: 18px 24px;
+           border-bottom: 2px solid var(--info); display: flex; flex-wrap: wrap; gap: 16px;
+           align-items: center; justify-content: space-between; }
+  header h1 { margin: 0; font-size: 22px; }
+  header .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .rolle-schalter { display: flex; align-items: center; gap: 10px; background: var(--panel);
+                    padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); }
+  .rolle-schalter select { background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+                           border-radius: 6px; padding: 5px 8px; }
+  .btn-reset { background: var(--danger); color: #fff; border: none; border-radius: 8px;
+               padding: 7px 14px; cursor: pointer; font-size: 13px; }
+  .btn-reset:hover { filter: brightness(1.15); }
+  nav.tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 24px; background: #14161f;
+             border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+  nav.tabs button { background: var(--panel2); color: var(--muted); border: 1px solid var(--border);
+                    border-radius: 9px; padding: 8px 16px; cursor: pointer; font-size: 14px; }
+  nav.tabs button:hover { color: var(--text); }
+  nav.tabs button.aktiv { background: var(--info); color: #fff; border-color: var(--info); }
+  main { padding: 24px; max-width: 1100px; margin: 0 auto; }
+  section.tab { display: none; }
+  section.tab.aktiv { display: block; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+           padding: 18px 20px; margin-bottom: 18px; }
+  .panel h2 { margin: 0 0 4px; font-size: 18px; }
+  .panel .hinweis { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 850px) { .grid { grid-template-columns: 1fr; } }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 4px; }
+  input[type=text], input[type=number], input[type=date], select, textarea {
+    width: 100%; background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; font-size: 14px; font-family: inherit; }
+  textarea { min-height: 80px; resize: vertical; }
+  button.akt { background: var(--info); color: #fff; border: none; border-radius: 8px;
+               padding: 9px 18px; cursor: pointer; font-size: 14px; margin-top: 14px; }
+  button.akt:hover { filter: brightness(1.15); }
+  button.akt.gruen { background: var(--success); }
+  button.akt.rot { background: var(--danger); }
+  button.akt.grau { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+  button.akt.gelb { background: var(--warn); color: #1a1d29; }
+  button.klein { padding: 4px 9px; font-size: 12px; margin: 0 3px 3px 0; border-radius: 6px;
+                 border: 1px solid var(--border); background: var(--panel2); color: var(--muted); cursor: pointer; }
+  button.klein:hover { color: var(--text); }
+  .wortzaehler { font-size: 12px; margin-top: 3px; min-height: 16px; }
+  .wortzaehler.ok { color: var(--success); }
+  .wortzaehler.fehler { color: var(--danger); }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px;
+           color: #1a1d29; font-weight: 600; }
+  .karte { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px;
+           padding: 12px 14px; margin-bottom: 10px; }
+  .karte .top { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+                flex-wrap: wrap; }
+  .karte .felder { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.7; }
+  .karte .aktionen { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .fehlerliste { background: rgba(231,76,60,.12); border: 1px solid var(--danger); border-radius: 8px;
+                 padding: 10px 14px; margin-top: 12px; font-size: 13px; }
+  .erfolg { background: rgba(46,204,113,.12); border: 1px solid var(--success); border-radius: 8px;
+            padding: 10px 14px; margin-top: 12px; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  .schritte { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+  .schritte span { background: var(--panel2); border: 1px solid var(--border); border-radius: 16px;
+                   padding: 4px 12px; font-size: 12px; color: var(--muted); }
+  .schritte span.aktiv { background: var(--info); color: #fff; border-color: var(--info); }
+  .checkliste { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
+  @media (max-width: 850px) { .checkliste { grid-template-columns: 1fr; } }
+  .checkliste label { display: flex; gap: 8px; align-items: center; color: var(--text); font-size: 14px;
+                      margin: 0; cursor: default; }
+  .checkliste label.erfuellt { color: var(--success); }
+  .fortschritt { background: var(--panel2); border-radius: 10px; height: 14px; overflow: hidden;
+                 border: 1px solid var(--border); margin: 10px 0 18px; }
+  .fortschritt > div { height: 100%; background: var(--success); width: 0; transition: width .4s; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;
+               margin-bottom: 18px; }
+  .stat { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .stat .zahl { font-size: 26px; font-weight: 700; }
+  .stat .name { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+  .log-eintrag { font-size: 13px; padding: 7px 10px; border-left: 3px solid var(--info);
+                 background: var(--panel2); margin-bottom: 6px; border-radius: 0 8px 8px 0; }
+  .log-eintrag .zeit { color: var(--muted); font-size: 11px; margin-right: 8px; }
+  .frage-ref { background: #14161f; border-left: 3px solid var(--purple); padding: 8px 12px;
+               margin: 6px 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+  .invisible { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🌌 GalaxyBot · Test-Dashboard</h1>
+    <div class="sub">Interaktiver Simulator für alle Systeme · offline, ohne Discord-Verbindung ·
+      Daten werden lokal (localStorage) gespeichert</div>
+  </div>
+  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    <div class="rolle-schalter">
+      <label for="sicht" style="margin:0;">Sicht:</label>
+      <select id="sicht" onchange="app.sichtWechseln(this.value)">
+        <option value="leitung">👑 Serverleitung (alle Rechte)</option>
+        <option value="team">👤 Teammitglied (eingeschränkt)</option>
+      </select>
+    </div>
+    <button class="btn-reset" onclick="app.zuruecksetzen()">Alles zurücksetzen</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="uebersicht" onclick="app.zeigeTab('uebersicht')">📊 Übersicht</button>
+  <button data-tab="bewerbungen" onclick="app.zeigeTab('bewerbungen')">📋 Bewerbungen</button>
+  <button data-tab="abwesenheit" onclick="app.zeigeTab('abwesenheit')">💤 Abwesenheit</button>
+  <button data-tab="tickets" onclick="app.zeigeTab('tickets')">🎫 Tickets</button>
+  <button data-tab="moderation" onclick="app.zeigeTab('moderation')">🔨 Moderation</button>
+  <button data-tab="economy" onclick="app.zeigeTab('economy')">💰 Economy</button>
+  <button data-tab="automod" onclick="app.zeigeTab('automod')">🛡️ AutoMod</button>
+  <button data-tab="logs" onclick="app.zeigeTab('logs')">📜 Logs</button>
+</nav>
+
+<main>
+  <!-- ============================ ÜBERSICHT ============================ -->
+  <section class="tab" id="tab-uebersicht">
+    <div class="panel">
+      <h2>📊 Status &amp; Test-Fortschritt</h2>
+      <div class="hinweis">Gesamttest nach Master-Prompt §34 – die Häkchen setzen sich automatisch,
+        sobald du die jeweilige Funktion im Dashboard ausgeführt hast.</div>
+      <div class="stat-grid" id="stat-grid"></div>
+      <div class="fortschritt"><div id="fortschritt-balken"></div></div>
+      <div style="font-size:13px; color:var(--muted);" id="fortschritt-text"></div>
+    </div>
+    <div class="grid">
+      <div class="panel">
+        <h2>📋 Bewerbungen testen</h2>
+        <div class="checkliste" id="check-bewerbungen"></div>
+      </div>
+      <div class="panel">
+        <h2>💤 Abwesenheit testen</h2>
+        <div class="checkliste" id="check-abwesenheit"></div>
+      </div>
+      <div class="panel">
+        <h2>💰 Economy &amp; 🔨 Moderation</h2>
+        <div class="checkliste" id="check-economy-mod"></div>
+      </div>
+      <div class="panel">
+        <h2>🛡️ Sicherheit / AutoMod</h2>
+        <div class="checkliste" id="check-sicherheit"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ BEWERBUNGEN ============================ -->
+  <section class="tab" id="tab-bewerbungen">
+    <div class="panel">
+      <h2>📋 Bewerbung einreichen</h2>
+      <div class="hinweis">Alle Freitextfelder: <b>50–250 Wörter</b> (Master-Prompt §6).
+        Mit den kleinen Buttons lässt sich ein Feld exakt so viele Wörter füllen –
+        perfekt um die Grenzen 49 / 50 / 250 / 251 zu testen.</div>
+
+      <label for="bew-typ">Bereich</label>
+      <select id="bew-typ" onchange="app.bewTypGeaendert()"></select>
+
+      <div id="bew-anforderungen" class="frage-ref" style="margin-top:12px;"></div>
+
+      <div class="grid">
+        <div>
+          <label for="bew-alter">Alter</label>
+          <input type="number" id="bew-alter" min="13" max="99" value="18">
+          <label for="bew-zeitzone">Zeitzone</label>
+          <input type="text" id="bew-zeitzone" value="MESZ (UTC+2)">
+          <label for="bew-online">Online-Zeit pro Woche (Stunden)</label>
+          <input type="number" id="bew-online" min="0" max="168" value="12">
+          <label for="bew-zeiten">Übliche Online-Zeiten</label>
+          <input type="text" id="bew-zeiten" value="Mo–Fr 18–22 Uhr, Sa/So ganztägig">
+        </div>
+        <div>
+          <div class="hinweis" style="margin:0 0 6px;">Fachfragen des Bereichs (Referenz):</div>
+          <div id="bew-fragen"></div>
+        </div>
+      </div>
+
+      <div id="bew-freitext"></div>
+
+      <label style="display:flex; gap:8px; align-items:center; color:var(--text); font-size:14px;">
+        <input type="checkbox" id="bew-bestaetigung" style="width:auto;">
+        Ich bestätige, dass meine Angaben vollständig und korrekt sind.
+      </label>
+      <button class="akt" onclick="app.bewerbungAbsenden()">Bewerbung absenden</button>
+      <div id="bew-ergebnis"></div>
+    </div>
+
+    <div class="panel">
+      <h2>📥 Eingegangene Bewerbungen</h2>
+      <div class="hinweis">Status-Übergänge: 🟡 In Prüfung → 🔵 Rückfrage / 🟠 Vorstellungsgespräch →
+        🟢 Angenommen / 🔴 Abgelehnt / ⚫ Zurückgezogen → Archiv</div>
+      <div id="bew-liste"></div>
+    </div>
+  </section>
+
+  <!-- ============================ ABWESENHEIT ============================ -->
+  <section class="tab" id="tab-abwesenheit">
+    <div class="panel">
+      <h2>💤 Team-Abwesenheit – Panel</h2>
+      <div class="hinweis">So sieht das Panel in <code>📅・team-abwesenheit</code> aus.
+        Meldepflicht ab <b>3 Kalendertagen</b>; private Details sind nicht erforderlich
+        („Privater Grund“ wird immer akzeptiert).</div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <button class="akt" onclick="app.abwStart('normal')">💤 Abwesenheit melden</button>
+        <button class="akt grau" onclick="app.abwMeine()">📅 Meine Abwesenheit</button>
+        <button class="akt grau" onclick="app.abwVerlaengerung()">🔄 Abwesenheit verlängern</button>
+        <button class="akt gruen" onclick="app.abwRueckkehr()">✅ Rückkehr melden</button>
+        <button class="akt rot" onclick="app.abwStart('kurz')">🚨 Kurzfristig abmelden</button>
+      </div>
+    </div>
+
+    <div class="panel invisible" id="abw-formular">
+      <h2 id="abw-formular-titel">💤 Abwesenheit melden</h2>
+      <div class="schritte" id="abw-schritte"></div>
+      <div id="abw-formular-inhalt"></div>
+    </div>
+
+    <div class="panel">
+      <h2>📅 Abwesenheitsübersicht</h2>
+      <div class="hinweis">Entspricht <code>📅・abwesenheitsübersicht</code> – nur für das Team sichtbar.</div>
+      <div id="abw-uebersicht"></div>
+    </div>
+
+    <div class="panel">
+      <h2>📋 Alle Abwesenheiten</h2>
+      <div id="abw-liste"></div>
+    </div>
+  </section>
+
+  <!-- ============================ TICKETS ============================ -->
+  <section class="tab" id="tab-tickets">
+    <div class="panel">
+      <h2>🎫 Ticket erstellen</h2>
+      <div class="hinweis">So funktioniert das Panel in <code>🎫・ticket-erstellen</code>.
+        Tickets sind nur für den Ersteller und das zuständige Team sichtbar.</div>
+      <label for="ticket-typ">Ticketart</label>
+      <select id="ticket-typ"></select>
+      <label for="ticket-betreff">Betreff</label>
+      <input type="text" id="ticket-betreff" placeholder="Worum geht es?">
+      <button class="akt" onclick="app.ticketErstellen()">Ticket erstellen</button>
+      <div id="ticket-ergebnis"></div>
+    </div>
+    <div class="panel">
+      <h2>🎫 Offene Tickets</h2>
+      <div id="ticket-liste"></div>
+    </div>
+  </section>
+
+  <!-- ============================ MODERATION ============================ -->
+  <section class="tab" id="tab-moderation">
+    <div class="panel">
+      <h2>🔨 Moderationsaktion ausführen</h2>
+      <div class="hinweis">/warn &amp; /timeout ab 🔨 Moderation · /kick &amp; /ban ab 🔧 Administration
+        (wird hier nicht erzwungen – zum Testen frei wählbar).</div>
+      <label for="mod-mitglied">Mitglied</label>
+      <select id="mod-mitglied"></select>
+      <label for="mod-aktion">Aktion</label>
+      <select id="mod-aktion" onchange="app.modAktionGeaendert()">
+        <option value="warn">⚠️ Verwarnung</option>
+        <option value="timeout">🔇 Timeout</option>
+        <option value="kick">👢 Kick</option>
+        <option value="ban">🔨 Ban</option>
+      </select>
+      <label for="mod-dauer">Dauer (nur Timeout) – z. B. 10m, 1h, 2h30m, 1d</label>
+      <input type="text" id="mod-dauer" value="10m" oninput="app.modDauerVorschau()">
+      <div class="wortzaehler" id="mod-dauer-vorschau"></div>
+      <label for="mod-grund">Grund</label>
+      <input type="text" id="mod-grund" value="Regelverstoß">
+      <button class="akt rot" onclick="app.modAusfuehren()">Aktion ausführen</button>
+      <div id="mod-ergebnis"></div>
+    </div>
+    <div class="panel">
+      <h2>📜 Aktionsverlauf</h2>
+      <div id="mod-liste"></div>
+    </div>
+  </section>
+
+  <!-- ============================ ECONOMY ============================ -->
+  <section class="tab" id="tab-economy">
+    <div class="panel">
+      <h2>💰 Rollen-Einkommen (UnbelievaBoat)</h2>
+      <div class="hinweis">Alle Werte sind anpassbar (Master-Prompt §13). Währung: €</div>
+      <table>
+        <thead><tr><th>Rolle</th><th>Einkommen / Tag</th></tr></thead>
+        <tbody id="eco-tabelle"></tbody>
+      </table>
+    </div>
+    <div class="grid">
+      <div class="panel">
+        <h2>💸 Überweisung</h2>
+        <label for="eco-von">Von</label>
+        <select id="eco-von"></select>
+        <label for="eco-nach">An</label>
+        <select id="eco-nach"></select>
+        <label for="eco-betrag">Betrag (€)</label>
+        <input type="number" id="eco-betrag" value="500" min="1">
+        <button class="akt" onclick="app.ecoUeberweisen()">Überweisen</button>
+        <div id="eco-ergebnis"></div>
+      </div>
+      <div class="panel">
+        <h2>🏆 Kontostände &amp; Leaderboard</h2>
+        <div id="eco-liste"></div>
+        <button class="akt gelb" onclick="app.ecoDaily()">🎁 Daily Reward für alle (+100 €)</button>
+        <button class="akt grau" onclick="app.ecoEinkommen()">💼 Tages-Einkommen auszahlen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ AUTOMOD ============================ -->
+  <section class="tab" id="tab-automod">
+    <div class="panel">
+      <h2>🛡️ AutoMod-Konfiguration</h2>
+      <div class="hinweis">Entspricht den Settings von GalaxyBot (in der echten Bot-DB gespeichert).</div>
+      <div class="grid">
+        <div>
+          <label for="am-spam">Nachrichten im Zeitfenster (Spam)</label>
+          <input type="number" id="am-spam" min="2" value="6">
+          <label for="am-fenster">Zeitfenster (Sekunden)</label>
+          <input type="number" id="am-fenster" min="1" value="5">
+          <label for="am-eskalation">Verstöße bis Auto-Timeout</label>
+          <input type="number" id="am-eskalation" min="1" value="3">
+        </div>
+        <div>
+          <label for="am-mention">Max. Erwähnungen pro Nachricht</label>
+          <input type="number" id="am-mention" min="1" value="4">
+          <label for="am-link">Discord-Einladungen blocken</label>
+          <select id="am-link"><option value="1" selected>Ja</option><option value="0">Nein</option></select>
+          <button class="akt" onclick="app.amSpeichern()">Speichern</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>🧪 Nachrichten-Simulator</h2>
+      <label for="am-text">Nachrichtentext</label>
+      <textarea id="am-text" placeholder="Text einer fiktiven Nachricht ..."></textarea>
+      <label for="am-anz-mention">Anzahl Erwähnungen in dieser Nachricht</label>
+      <input type="number" id="am-anz-mention" min="0" value="0">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+        <button class="klein" onclick="app.amBeispiel('spam')">📋 Spam-Beispiel</button>
+        <button class="klein" onclick="app.amBeispiel('mention')">📋 Mention-Spam</button>
+        <button class="klein" onclick="app.amBeispiel('link')">📋 Einladungs-Link</button>
+        <button class="klein" onclick="app.amBeispiel('normal')">📋 Normale Nachricht</button>
+      </div>
+      <button class="akt" onclick="app.amPruefen()">Nachricht prüfen</button>
+      <div id="am-ergebnis"></div>
+    </div>
+  </section>
+
+  <!-- ============================ LOGS ============================ -->
+  <section class="tab" id="tab-logs">
+    <div class="panel">
+      <h2>📜 Ereignis-Logs</h2>
+      <div class="hinweis">Alle Aktionen in diesem Dashboard werden geloggt – wie GalaxyBot
+        sie in die jeweiligen Log-Channels schreibt.</div>
+      <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+        <select id="log-filter" onchange="app.logsRendern()">
+          <option value="">Alle Kategorien</option>
+        </select>
+        <button class="akt grau" onclick="app.logsLeeren()">Logs leeren</button>
+      </div>
+      <div id="log-liste"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+"use strict";
+/* =========================================================================
+ * GalaxyBot Test-Dashboard – Logik
+ * ========================================================================= */
+
+const LS_KEY = "galaxy_test_state_v1";
+
+const BEW_STATUS = {
+  pruefung:   { label: "🟡 In Prüfung",          farbe: "#F1C40F" },
+  rueckfrage: { label: "🔵 Rückfrage",           farbe: "#3498DB" },
+  gespraech:  { label: "🟠 Vorstellungsgespräch", farbe: "#E67E22" },
+  angenommen: { label: "🟢 Angenommen",          farbe: "#2ECC71" },
+  abgelehnt:  { label: "🔴 Abgelehnt",           farbe: "#E74C3C" },
+  zurueckgezogen: { label: "⚫ Zurückgezogen",   farbe: "#95A5A6" },
+};
+
+const ABW_STATUS = {
+  eingereicht: { label: "🟡 Eingereicht", farbe: "#F1C40F" },
+  genehmigt:   { label: "🟢 Genehmigt",   farbe: "#2ECC71" },
+  abgelehnt:   { label: "🔴 Abgelehnt",   farbe: "#E74C3C" },
+  verlaengert: { label: "🔵 Verlängert",  farbe: "#3498DB" },
+  aktiv:       { label: "🟣 Aktiv",       farbe: "#9B59B6" },
+  beendet:     { label: "⚫ Beendet",     farbe: "#95A5A6" },
+};
+
+const BEW_TYPEN = {
+  polizei:      { emoji: "👮", name: "Polizei",
+    fragen: ["Warum möchtest du zur Polizei?", "Welche Erfahrungen hast du?",
+      "Was bedeutet gutes Police-RP?", "Wie gehst du bei einer Verkehrskontrolle vor?",
+      "Wie reagierst du auf einen aggressiven Bürger?",
+      "Wie gehst du mit einem Regelverstoß eines Kollegen um?",
+      "Wie würdest du einen größeren Einsatz organisieren?"],
+    anforderungen: ["Mindestalter 16", "grundlegende RP-Erfahrung",
+      "mindestens 5 Stunden Aktivität pro Woche", "ausreichende Regelkenntnisse",
+      "respektvoller Umgang", "Teamfähigkeit", "keine aktuelle schwere Sanktion"] },
+  feuerwehr:    { emoji: "🚒", name: "Feuerwehr",
+    fragen: ["Warum möchtest du zur Feuerwehr?", "Welche Erfahrungen hast du?",
+      "Wie verhältst du dich bei einem größeren Einsatz?", "Wie wichtig ist Kommunikation?",
+      "Wie gehst du mit Stresssituationen um?",
+      "Wie würdest du einen größeren Einsatz koordinieren?"],
+    anforderungen: ["Mindestalter 16", "grundlegende RP-Erfahrung",
+      "mindestens 5 Stunden Aktivität pro Woche", "ausreichende Regelkenntnisse",
+      "respektvoller Umgang", "Teamfähigkeit", "keine aktuelle schwere Sanktion"] },
+  rettungsdienst: { emoji: "🚑", name: "Rettungsdienst",
+    fragen: ["Warum möchtest du zum Rettungsdienst?", "Welche RP-Erfahrung hast du?",
+      "Wie versorgst du einen verletzten Spieler?",
+      "Wie verhältst du dich an einer unübersichtlichen Einsatzstelle?",
+      "Wie gehst du mit anderen Beteiligten um?", "Wie reagierst du auf Stress?"],
+    anforderungen: ["Mindestalter 16", "grundlegende RP-Erfahrung",
+      "mindestens 5 Stunden Aktivität pro Woche", "ausreichende Regelkenntnisse",
+      "respektvoller Umgang", "Teamfähigkeit", "keine aktuelle schwere Sanktion"] },
+  justiz:       { emoji: "⚖️", name: "Justiz",
+    fragen: ["Warum möchtest du zur Justiz?", "Welche Erfahrungen hast du?",
+      "Was bedeutet Neutralität?", "Wie gehst du mit widersprüchlichen Aussagen um?",
+      "Wie begründest du eine Entscheidung?", "Wie gehst du mit Konflikten um?"],
+    anforderungen: ["Mindestalter 18", "gute RP-Erfahrung", "sehr gute Regelkenntnisse",
+      "sachliches Auftreten", "gute schriftliche Kommunikation"] },
+  support:      { emoji: "🎫", name: "Support",
+    fragen: ["Warum möchtest du Supporter werden?", "Welche Erfahrungen hast du?",
+      "Wie gehst du mit einem unzufriedenen Spieler um?", "Wie löst du einen Streit?",
+      "Wie gehst du mit Kritik um?",
+      "Wie reagierst du, wenn du selbst Teil eines Konflikts wirst?"],
+    anforderungen: ["Mindestalter 16", "gute Kommunikation", "Konfliktfähigkeit",
+      "regelmäßige Aktivität", "gute Regelkenntnisse"] },
+  moderator:    { emoji: "🔨", name: "Moderator",
+    fragen: ["Warum möchtest du Moderator werden?", "Welche Erfahrungen hast du?",
+      "Wie gehst du mit Regelverstößen um?", "Wie gehst du mit Beleidigungen um?",
+      "Wie löst du einen Konflikt?", "Was bedeutet neutrales Moderieren?"],
+    anforderungen: ["Mindestalter 16", "gute Regelkenntnisse",
+      "grundlegende Moderationserfahrung", "neutraler Umgang", "Konfliktfähigkeit"] },
+  administrator: { emoji: "🛡️", name: "Administrator",
+    fragen: ["Warum möchtest du Administrator werden?",
+      "Welche Administrationserfahrung hast du?", "Welche Discord-Erfahrung hast du?",
+      "Wie löst du einen größeren Konflikt?", "Wie gehst du mit Berechtigungen um?",
+      "Wie dokumentierst du schwierige Entscheidungen?"],
+    anforderungen: ["Mindestalter 18", "Team-/Moderationserfahrung", "gute Discord-Kenntnisse",
+      "sehr gute Regelkenntnisse", "verantwortungsvoller Umgang mit Berechtigungen",
+      "Vorstellungsgespräch"] },
+  teamleitung:  { emoji: "👑", name: "Teamleitung",
+    fragen: ["Warum möchtest du Teamleitung werden?", "Welche Führungserfahrung hast du?",
+      "Wie organisierst du ein Team?", "Wie löst du interne Teamkonflikte?",
+      "Wie motivierst du Teammitglieder?", "Welche Ideen hast du für den Server?",
+      "Wie arbeitest du neue Teammitglieder ein?"],
+    anforderungen: ["Mindestalter 18", "Team-Erfahrung", "Führungserfahrung",
+      "Konfliktlösung", "Organisation", "regelmäßige Aktivität", "Vorstellungsgespräch"] },
+  fraktion:     { emoji: "💼", name: "Fraktion",
+    fragen: ["Warum möchtest du dieser Fraktion beitreten?", "Welche Erfahrungen hast du?",
+      "Was macht gute RP-Fraktionsarbeit?", "Wie gehst du mit Konflikten um?"],
+    anforderungen: ["Mindestalter 16", "grundlegende RP-Erfahrung",
+      "mindestens 5 Stunden Aktivität pro Woche", "Teamfähigkeit"] },
+  unternehmen:  { emoji: "🏢", name: "Unternehmen",
+    fragen: ["Was für ein Unternehmen möchtest du gründen?",
+      "Welche Erfahrungen hast du?", "Wie bereicherst du das RP?",
+      "Wie gehst du mit Konflikten um?"],
+    anforderungen: ["Mindestalter 16", "grundlegende RP-Erfahrung",
+      "mindestens 5 Stunden Aktivität pro Woche", "Teamfähigkeit"] },
+};
+
+const FREITEXT_FELDER = [
+  { id: "motivation", label: "Motivation" },
+  { id: "rp-erfahrung", label: "RP-Erfahrung" },
+  { id: "team-erfahrung", label: "Team-/Fraktionserfahrung" },
+  { id: "staerken", label: "Stärken" },
+  { id: "schwaechen", label: "Schwächen" },
+  { id: "kritik", label: "Umgang mit Kritik" },
+  { id: "konflikte", label: "Umgang mit Konflikten" },
+  { id: "regeln", label: "Regelverständnis" },
+  { id: "fachfrage", label: "Antwort auf Fachfrage 1" },
+  { id: "fallbeispiel", label: "Fallbeispiel" },
+];
+
+const FALLBEISPIEL = "Zwei Spieler beschuldigen sich gegenseitig eines Regelverstoßes. "
+  + "Beide behaupten, im Recht zu sein. Beschreibe, wie du die Situation lösen würdest.";
+
+const GRUENDE = ["Urlaub", "Schule/Ausbildung", "Arbeit", "Private Gründe",
+  "Gesundheitliche Gründe", "Technische Probleme", "Sonstiges", "Privater Grund"];
+
+const ERREICHBARKEIT = [
+  { id: "erreichbar", label: "🟢 Erreichbar" },
+  { id: "eingeschraenkt", label: "🟡 Eingeschränkt erreichbar" },
+  { id: "nicht", label: "🔴 Nicht erreichbar" },
+];
+
+const TICKET_TYPEN = {
+  support: { emoji: "🎫", label: "Support" },
+  bewerbung: { emoji: "📋", label: "Bewerbung" },
+  spieler_meldung: { emoji: "⚠️", label: "Spieler melden" },
+  bug_meldung: { emoji: "🐛", label: "Bug melden" },
+  vorschlag: { emoji: "💡", label: "Vorschlag" },
+  partnerschaft: { emoji: "🤝", label: "Partnerschaft" },
+};
+
+const MITGLIEDER = [
+  { id: 1, name: "Max Mustermann", rollen: ["👤 Mitglied", "👮 Polizei"] },
+  { id: 2, name: "Lisa Meyer", rollen: ["👤 Mitglied", "🚒 Feuerwehr"] },
+  { id: 3, name: "Tom Schmidt", rollen: ["🆕 Neuer Bürger"] },
+  { id: 4, name: "Anna Weber", rollen: ["🔧 Administration"] },
+  { id: 5, name: "Jonas Krüger", rollen: ["👤 Mitglied", "⚖️ Justiz"] },
+  { id: 6, name: "Sarah Lang", rollen: ["🔨 Moderation"] },
+];
+
+const STANDARD_EINKOMMEN = {
+  "👮 Polizei": 2500, "🚒 Feuerwehr": 2400, "🚑 Rettungsdienst": 2300,
+  "⚖️ Justiz": 3000, "🏛️ Regierung": 3200, "💼 Unternehmen": null, "👤 Zivilist": null,
+};
+
+const CHECKS = {
+  bew_49: "49 Wörter → abgelehnt", bew_50: "50 Wörter → akzeptiert",
+  bew_250: "250 Wörter → akzeptiert", bew_251: "251 Wörter → abgelehnt",
+  bew_senden: "Bewerbung abgesendet", bew_rueckfrage: "Rückfrage gestellt",
+  bew_gespraech: "Vorstellungsgespräch", bew_annahme: "Annahme + Rolle vergeben",
+  bew_ablehnung: "Ablehnung", bew_archiv: "Archivierung", bew_log: "Bewerbungslog",
+  abw_antrag: "Antrag eingereicht", abw_genehmigt: "Genehmigt", abw_abgelehnt: "Abgelehnt",
+  abw_aktiv: "Aktiv (Rolle 💤 Abwesend)", abw_verl_beantragt: "Verlängerung beantragt",
+  abw_verl_ok: "Verlängerung bestätigt", abw_rueckkehr: "Rückkehr gemeldet",
+  abw_auto: "Automatisch beendet", abw_log: "Abwesenheitslog",
+  eco_ueberweisung: "Überweisung ausgeführt", eco_daily: "Daily Reward",
+  eco_einkommen: "Job-/Rollen-Einkommen", eco_leaderboard: "Leaderboard angesehen",
+  mod_warn: "Verwarnung", mod_timeout: "Timeout", mod_kick: "Kick", mod_ban: "Ban",
+  am_spam: "Spam erkannt", am_mention: "Mention-Spam erkannt", am_link: "Einladung blockiert",
+  am_timeout: "Auto-Timeout verhängt", ticket_erstellt: "Ticket erstellt",
+  ticket_geschlossen: "Ticket geschlossen",
+};
+
+/* ----------------------------- Zustand ---------------------------------- */
+
+function standardState() {
+  return {
+    sicht: "leitung",
+    bewerbungen: [], bewArchiv: [], bewCounter: 0,
+    abwesenheiten: [], abwCounter: 0,
+    tickets: [], ticketCounter: 0,
+    aktionen: [],
+    logs: [],
+    einkommen: Object.assign({}, STANDARD_EINKOMMEN),
+    konten: {},
+    automod: { spam: 6, fenster: 5, eskalation: 3, mention: 4, link: true },
+    checks: {},
+    abwForm: null,
+  };
+}
+
+let state = laden();
+
+function laden() {
+  try {
+    const roh = localStorage.getItem(LS_KEY);
+    if (!roh) return standardState();
+    const s = JSON.parse(roh);
+    return Object.assign(standardState(), s);
+  } catch (e) {
+    return standardState();
+  }
+}
+
+function speichern() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  catch (e) { /* localStorage kann volllaufen – ignorieren */ }
+}
+
+function jetzt() {
+  return new Date().toLocaleString("de-DE", {
+    day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit",
+  });
+}
+
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function zaehleWoerter(text) {
+  return String(text || "").trim().split(/\s+/).filter(Boolean).length;
+}
+
+function worte(n) {
+  const w = [];
+  for (let i = 0; i < n; i++) w.push("Wort" + (i + 1));
+  return w.join(" ");
+}
+
+function el(id) { return document.getElementById(id); }
+
+function badge(status, map) {
+  const s = map[status];
+  return `<span class="badge" style="background:${s.farbe};">${s.label}</span>`;
+}
+
+function logEintrag(kategorie, titel, details) {
+  state.logs.unshift({ zeit: jetzt(), kategorie, titel, details: details || "" });
+  if (state.logs.length > 300) state.logs.length = 300;
+  speichern();
+  if (el("log-liste")) app.logsRendern();
+}
+
+function markCheck(key) {
+  if (!state.checks[key]) {
+    state.checks[key] = true;
+    speichern();
+    app.checklisteRendern();
+    app.statsRendern();
+  }
+}
+
+function parseDauer(eingabe) {
+  const text = String(eingabe || "").trim().toLowerCase();
+  if (!text) return null;
+  let gesamt = 0, rest = text, gefunden = false;
+  const einheiten = { d: 86400, h: 3600, m: 60, s: 1 };
+  while (rest) {
+    let gefundenEinheit = false;
+    for (const einheit in einheiten) {
+      const idx = rest.indexOf(einheit);
+      if (idx > -1) {
+        const wert = parseInt(rest.substring(0, idx), 10);
+        if (isNaN(wert)) return null;
+        gesamt += wert * einheiten[einheit];
+        rest = rest.substring(idx + 1).trim();
+        gefunden = gefundenEinheit = true;
+        break;
+      }
+    }
+    if (!gefundenEinheit) return null;
+  }
+  return gefunden ? gesamt : null;
+}
+
+function parseDatum(eingabe) {
+  const text = String(eingabe || "").trim();
+  const erg = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(text);
+  if (erg) {
+    const d = new Date(+erg[3], +erg[2] - 1, +erg[1]);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const erg2 = /^(\d{1,2})\.(\d{1,2})$/.exec(text);
+  if (erg2) {
+    const d = new Date(new Date().getFullYear(), +erg2[2] - 1, +erg2[1]);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const erg3 = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(text);
+  if (erg3) {
+    const d = new Date(+erg3[1], +erg3[2] - 1, +erg3[3]);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+
+function formatDatum(d) {
+  if (!d) return "–";
+  const tag = String(d.getDate()).padStart(2, "0");
+  const monat = String(d.getMonth() + 1).padStart(2, "0");
+  return `${tag}.${monat}.${d.getFullYear()}`;
+}
+
+function istHeute(d) {
+  const heute = new Date();
+  return d.getFullYear() === heute.getFullYear() && d.getMonth() === heute.getMonth()
+    && d.getDate() === heute.getDate();
+}
+
+/* ------------------------------- App ------------------------------------ */
+
+const app = {
+
+  /* --- Tabs & Sicht ----------------------------------------------------- */
+
+  sichtWechseln(wert) {
+    state.sicht = wert;
+    speichern();
+    this.abwUebersichtRendern();
+    this.abwListeRendern();
+    logEintrag("System", "Sicht gewechselt", wert === "leitung" ? "👑 Serverleitung" : "👤 Teammitglied");
+  },
+
+  zeigeTab(name) {
+    document.querySelectorAll("nav.tabs button").forEach(b => {
+      b.classList.toggle("aktiv", b.dataset.tab === name);
+    });
+    document.querySelectorAll("section.tab").forEach(s => {
+      s.classList.toggle("aktiv", s.id === "tab-" + name);
+    });
+    if (name === "uebersicht") { this.statsRendern(); this.checklisteRendern(); }
+    if (name === "bewerbungen") { this.bewRendern(); }
+    if (name === "abwesenheit") { this.abwUebersichtRendern(); this.abwListeRendern(); }
+    if (name === "tickets") { this.ticketListeRendern(); }
+    if (name === "moderation") { this.modListeRendern(); }
+    if (name === "economy") { this.ecoRendern(); }
+    if (name === "logs") { this.logsRendern(); }
+  },
+
+  zuruecksetzen() {
+    if (!confirm("Wirklich alle Test-Daten zurücksetzen?")) return;
+    state = standardState();
+    speichern();
+    this.zeigeTab("uebersicht");
+    this.initFormulare();
+    logEintrag("System", "Dashboard zurückgesetzt", "");
+  },
+
+  /* --- Übersicht -------------------------------------------------------- */
+
+  statsRendern() {
+    const aktivAbw = state.abwesenheiten.filter(a => ["aktiv", "genehmigt", "verlaengert"].includes(a.status)).length;
+    const offeneBew = state.bewerbungen.filter(b => b.status !== "archiviert").length;
+    const offeneTickets = state.tickets.filter(t => t.status === "offen").length;
+    const daten = [
+      { name: "Bewerbungen", zahl: state.bewerbungen.length + state.bewArchiv.length },
+      { name: "Offene Bewerbungen", zahl: offeneBew },
+      { name: "Abwesenheiten", zahl: state.abwesenheiten.length },
+      { name: "Aktive Abwesenheiten", zahl: aktivAbw },
+      { name: "Tickets", zahl: state.tickets.length },
+      { name: "Offene Tickets", zahl: offeneTickets },
+      { name: "Logs", zahl: state.logs.length },
+      { name: "Checks erfüllt", zahl: Object.keys(state.checks).length + " / " + Object.keys(CHECKS).length },
+    ];
+    el("stat-grid").innerHTML = daten.map(d =>
+      `<div class="stat"><div class="zahl">${d.zahl}</div><div class="name">${esc(d.name)}</div></div>`
+    ).join("");
+
+    const gesamt = Object.keys(CHECKS).length;
+    const erfuellt = Object.keys(state.checks).length;
+    const prozent = Math.round(erfuellt / gesamt * 100);
+    el("fortschritt-balken").style.width = prozent + "%";
+    el("fortschritt-text").textContent = `Gesamttest: ${erfuellt} von ${gesamt} Funktionen getestet (${prozent} %)`;
+  },
+
+  checklisteRendern() {
+    const gruppen = {
+      "check-bewerbungen": ["bew_49", "bew_50", "bew_250", "bew_251", "bew_senden", "bew_rueckfrage",
+        "bew_gespraech", "bew_annahme", "bew_ablehnung", "bew_archiv", "bew_log"],
+      "check-abwesenheit": ["abw_antrag", "abw_genehmigt", "abw_abgelehnt", "abw_aktiv",
+        "abw_verl_beantragt", "abw_verl_ok", "abw_rueckkehr", "abw_auto", "abw_log"],
+      "check-economy-mod": ["eco_ueberweisung", "eco_daily", "eco_einkommen", "eco_leaderboard",
+        "mod_warn", "mod_timeout", "mod_kick", "mod_ban", "ticket_erstellt", "ticket_geschlossen"],
+      "check-sicherheit": ["am_spam", "am_mention", "am_link", "am_timeout"],
+    };
+    for (const containerId in gruppen) {
+      const container = el(containerId);
+      if (!container) continue;
+      container.innerHTML = gruppen[containerId].map(key => {
+        const ok = !!state.checks[key];
+        return `<label class="${ok ? "erfuellt" : ""}">
+          <input type="checkbox" disabled ${ok ? "checked" : ""}> ${esc(CHECKS[key])}</label>`;
+      }).join("");
+    }
+  },
+
+  /* --- Bewerbungen ------------------------------------------------------ */
+
+  bewRendern() {
+    const select = el("bew-typ");
+    if (!select.dataset.initialisiert) {
+      select.innerHTML = Object.keys(BEW_TYPEN).map(k =>
+        `<option value="${k}">${BEW_TYPEN[k].emoji} ${BEW_TYPEN[k].name}</option>`).join("");
+      select.dataset.initialisiert = "1";
+    }
+    this.bewTypGeaendert();
+    this.bewListeRendern();
+  },
+
+  bewTypGeaendert() {
+    const typ = BEW_TYPEN[el("bew-typ").value];
+    el("bew-anforderungen").innerHTML = "<b>Mindestanforderungen:</b> " + typ.anforderungen.join(" · ");
+    el("bew-fragen").innerHTML = typ.fragen.map((f, i) =>
+      `<div class="frage-ref"><b>${i + 1}.</b> ${esc(f)}</div>`).join("");
+
+    if (!el("bew-freitext").dataset.initialisiert) {
+      el("bew-freitext").innerHTML = FREITEXT_FELDER.map(f => `
+        <label>${esc(f.label)} <span style="color:var(--muted); font-weight:400;">(50–250 Wörter)</span></label>
+        <textarea id="bew-${f.id}" oninput="app.wortZaehlerUpdate('bew-${f.id}')"></textarea>
+        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+          <button class="klein" onclick="app.fuelleFeld('bew-${f.id}', 49)">49</button>
+          <button class="klein" onclick="app.fuelleFeld('bew-${f.id}', 50)">50</button>
+          <button class="klein" onclick="app.fuelleFeld('bew-${f.id}', 250)">250</button>
+          <button class="klein" onclick="app.fuelleFeld('bew-${f.id}', 251)">251</button>
+          <div class="wortzaehler" id="bew-${f.id}-count"></div>
+        </div>`).join("");
+      el("bew-freitext").dataset.initialisiert = "1";
+    }
+    const fachfrageLabel = document.querySelector('label[for=""]');
+    // Fachfrage-Label mit der ersten Frage des Bereichs überschreiben
+    const feld = el("bew-fachfrage");
+    if (feld) {
+      const label = feld.previousElementSibling;
+      while (label && label.tagName !== "LABEL") label = label.previousElementSibling;
+      if (label) label.innerHTML = `Antwort auf Fachfrage 1: <i>${esc(typ.fragen[0])}</i> <span style="color:var(--muted); font-weight:400;">(50–250 Wörter)</span>`;
+    }
+    // Fallbeispiel vorausfüllen (nur Hinweis)
+    const fb = el("bew-fallbeispiel");
+    if (fb && !fb.dataset.hinweis) {
+      fb.placeholder = FALLBEISPIEL;
+      fb.dataset.hinweis = "1";
+    }
+  },
+
+  fuelleFeld(id, n) {
+    el(id).value = worte(n);
+    this.wortZaehlerUpdate(id);
+  },
+
+  wortZaehlerUpdate(id) {
+    const feld = el(id);
+    const count = el(id + "-count");
+    if (!feld || !count) return;
+    const n = zaehleWoerter(feld.value);
+    const ok = n >= 50 && n <= 250;
+    count.textContent = `${n} Wörter` + (n === 0 ? "" : ok ? " ✓" : n < 50
+      ? ` (noch ${50 - n})` : ` (${n - 250} zu viel)`);
+    count.className = "wortzaehler " + (n === 0 ? "" : ok ? "ok" : "fehler");
+  },
+
+  bewerbungAbsenden() {
+    const typ = el("bew-typ").value;
+    const typDaten = BEW_TYPEN[typ];
+    const fehler = [];
+    const werte = {};
+
+    // Kurze Felder
+    const alter = parseInt(el("bew-alter").value, 10);
+    if (!alter || alter < 13) fehler.push("Alter ist ungültig.");
+    werte.alter = alter;
+    if (!el("bew-zeitzone").value.trim()) fehler.push("Zeitzone fehlt.");
+    werte.zeitzone = el("bew-zeitzone").value.trim();
+    if (!parseInt(el("bew-online").value, 10)) fehler.push("Online-Zeit fehlt.");
+    werte.online = parseInt(el("bew-online").value, 10);
+    if (!el("bew-zeiten").value.trim()) fehler.push("Übliche Online-Zeiten fehlen.");
+    werte.zeiten = el("bew-zeiten").value.trim();
+    if (!el("bew-bestaetigung").checked) fehler.push("Bestätigung der Angaben fehlt.");
+
+    // Freitextfelder mit Wortgrenzen
+    const gezaehlt = [];
+    FREITEXT_FELDER.forEach(f => {
+      const n = zaehleWoerter(el("bew-" + f.id).value);
+      gezaehlt.push(n);
+      werte[f.id] = el("bew-" + f.id).value.trim();
+      if (n < 50 || n > 250) {
+        fehler.push(`„${f.label}“: ${n} Wörter – erlaubt sind 50–250.`);
+      }
+    });
+
+    // Grenzen-Tests protokollieren (Master-Prompt §34)
+    if (fehler.length) {
+      const erste = gezaehlt.find(n => n < 50);
+      if (erste === 49) markCheck("bew_49");
+      if (gezaehlt.includes(251)) markCheck("bew_251");
+      el("bew-ergebnis").innerHTML = `<div class="fehlerliste">
+        <b>⚠️ Bewerbung konnte nicht gesendet werden:</b><ul>
+        ${fehler.map(f => `<li>${esc(f)}</li>`).join("")}</ul></div>`;
+      logEintrag("Bewerbungen", "Bewerbung abgelehnt (Wortgrenzen/Pflichtfelder)", typDaten.name);
+      return;
+    }
+
+    if (gezaehlt.includes(50)) markCheck("bew_50");
+    if (gezaehlt.includes(250)) markCheck("bew_250");
+
+    state.bewCounter += 1;
+    const id = "BEW-" + String(state.bewCounter).padStart(4, "0");
+    const bewerbung = {
+      id, typ, typName: typDaten.emoji + " " + typDaten.name,
+      status: "pruefung", werte, erstellt: jetzt(),
+    };
+    state.bewerbungen.unshift(bewerbung);
+    speichern();
+
+    markCheck("bew_senden");
+    markCheck("bew_log");
+    el("bew-ergebnis").innerHTML = `<div class="erfolg">✅ Bewerbung gesendet!
+      ID: <b>${id}</b> – Status: ${badge("pruefung", BEW_STATUS)}</div>`;
+    logEintrag("Bewerbungen", "Bewerbung eingegangen", `${id} · ${bewerbung.typName}`);
+    this.bewListeRendern();
+    this.statsRendern();
+  },
+
+  bewAktion(id, aktion) {
+    const bew = state.bewerbungen.find(b => b.id === id);
+    if (!bew) return;
+
+    if (aktion === "archivieren") {
+      bew.status = "archiviert";
+      state.bewArchiv.push(bew);
+      state.bewerbungen = state.bewerbungen.filter(b => b.id !== id);
+      markCheck("bew_archiv");
+      logEintrag("Bewerbungen", "Bewerbung archiviert", `${id} · ${bew.typName}`);
+    } else if (aktion === "rueckfrage") {
+      bew.status = "rueckfrage";
+      markCheck("bew_rueckfrage");
+      logEintrag("Bewerbungen", "Rückfrage an Bewerber", `${id} · ${bew.typName}`);
+    } else if (aktion === "gespraech") {
+      bew.status = "gespraech";
+      markCheck("bew_gespraech");
+      logEintrag("Bewerbungen", "Vorstellungsgespräch anberaumt", `${id} · ${bew.typName}`);
+    } else if (aktion === "annehmen") {
+      bew.status = "angenommen";
+      markCheck("bew_annahme");
+      logEintrag("Bewerbungen", "Bewerbung angenommen", `${id} · ${bew.typName} · Rolle vergeben`);
+    } else if (aktion === "ablehnen") {
+      bew.status = "abgelehnt";
+      markCheck("bew_ablehnung");
+      logEintrag("Bewerbungen", "Bewerbung abgelehnt", `${id} · ${bew.typName}`);
+    } else if (aktion === "zurueckziehen") {
+      bew.status = "zurueckgezogen";
+      logEintrag("Bewerbungen", "Bewerbung zurückgezogen", `${id} · ${bew.typName}`);
+    }
+
+    speichern();
+    this.bewListeRendern();
+    this.statsRendern();
+  },
+
+  bewListeRendern() {
+    const container = el("bew-liste");
+    if (!container) return;
+    if (!state.bewerbungen.length) {
+      container.innerHTML = `<div class="hinweis">Noch keine Bewerbungen. Reiche oben eine ein.</div>`;
+      return;
+    }
+    container.innerHTML = state.bewerbungen.map(b => {
+      const next = {
+        pruefung: ["rueckfrage", "gespraech", "annehmen", "ablehnen", "zurueckziehen"],
+        rueckfrage: ["gespraech", "annehmen", "ablehnen", "zurueckziehen"],
+        gespraech: ["annehmen", "ablehnen", "zurueckziehen"],
+      }[b.status] || [];
+      const buttons = next.map(a => {
+        const cls = { rueckfrage: "gelb", gespraech: "gelb", annehmen: "gruen",
+          ablehnen: "rot", zurueckziehen: "grau" }[a];
+        const lbl = { rueckfrage: "🔵 Rückfrage", gespraech: "🟠 Gespräch",
+          annehmen: "🟢 Annehmen", ablehnen: "🔴 Ablehnen",
+          zurueckziehen: "⚫ Zurückziehen" }[a];
+        return `<button class="akt ${cls}" onclick="app.bewAktion('${b.id}', '${a}')">${lbl}</button>`;
+      }).join("");
+      const archiv = `<button class="akt grau" onclick="app.bewAktion('${b.id}', 'archivieren')">📁 Archivieren</button>`;
+      return `<div class="karte">
+        <div class="top"><b>${esc(b.typName)}</b> ${badge(b.status, BEW_STATUS)}</div>
+        <div class="felder">
+          ID: ${b.id} · Eingegangen: ${esc(b.erstellt)}<br>
+          Alter: ${b.werte.alter} · Zeitzone: ${esc(b.werte.zeitzone)} ·
+          ${b.werte.online} h/Woche · ${esc(b.werte.zeiten)}<br>
+          Motivation: ${esc(b.werte.motivation.substring(0, 120))}${b.werte.motivation.length > 120 ? "…" : ""}
+        </div>
+        <div class="aktionen">${buttons}${archiv}</div>
+      </div>`;
+    }).join("");
+  },
+
+  /* --- Abwesenheit ------------------------------------------------------ */
+
+  abwStart(typ) {
+    state.abwForm = { typ, schritt: 0, daten: {
+      von: "", bis: "", rueckkehr: "", dauer: "", grund: "",
+      uebergabe: false, uebergabeText: "", erreichbarkeit: "", hinweis: "",
+    } };
+    el("abw-formular").classList.remove("invisible");
+    el("abw-formular-titel").textContent = typ === "kurz"
+      ? "🚨 Kurzfristig abmelden" : "💤 Abwesenheit melden";
+    this.abwSchrittRendern();
+  },
+
+  abwSchritteRendern(schritt) {
+    const typ = state.abwForm.typ;
+    let schritte;
+    if (typ === "kurz") {
+      schritte = ["Daten", "Erreichbarkeit"];
+    } else {
+      schritte = ["Grund", "Zeitraum", "Übergabe", "Erreichbarkeit"];
+    }
+    el("abw-schritte").innerHTML = schritte.map((s, i) =>
+      `<span class="${i === schritt ? "aktiv" : ""}">${i + 1}. ${s}</span>`).join("");
+  },
+
+  abwSchrittRendern() {
+    const form = state.abwForm;
+    const d = form.daten;
+    this.abwSchritteRendern(form.schritt);
+    const inhalt = el("abw-formular-inhalt");
+
+    if (form.typ === "kurz") {
+      if (form.schritt === 0) {
+        inhalt.innerHTML = `
+          <label for="abw-von">Beginn (TT.MM.JJJJ)</label>
+          <input type="text" id="abw-von" value="${esc(d.von)}" placeholder="z. B. ${formatDatum(new Date())}">
+          <label for="abw-dauer">Voraussichtliche Dauer</label>
+          <input type="text" id="abw-dauer" value="${esc(d.dauer)}" placeholder="z. B. 2 Tage">
+          <label for="abw-hinweis">Optionaler Hinweis (keine privaten Details nötig)</label>
+          <input type="text" id="abw-hinweis" value="${esc(d.hinweis)}">
+          <button class="akt" onclick="app.abwKurzSpeichern()">Weiter</button>`;
+      } else {
+        this.abwErreichbarkeitRendern();
+      }
+      return;
+    }
+
+    if (form.schritt === 0) {
+      inhalt.innerHTML = `<label>Grund auswählen</label>
+        <div>${GRUENDE.map(g => `<button class="klein" style="margin:4px;" onclick="app.abwGrund('${g}')">${g}</button>`).join("")}</div>`;
+    } else if (form.schritt === 1) {
+      inhalt.innerHTML = `
+        <label for="abw-von">Beginn (TT.MM.JJJJ)</label>
+        <input type="text" id="abw-von" value="${esc(d.von)}" placeholder="z. B. 24.09.2026">
+        <label for="abw-bis">Ende (TT.MM.JJJJ)</label>
+        <input type="text" id="abw-bis" value="${esc(d.bis)}" placeholder="z. B. 28.09.2026">
+        <label for="abw-rueckkehr">Voraussichtliche Rückkehr (TT.MM.JJJJ)</label>
+        <input type="text" id="abw-rueckkehr" value="${esc(d.rueckkehr)}" placeholder="z. B. 28.09.2026">
+        <label for="abw-hinweis">Optionaler Hinweis</label>
+        <input type="text" id="abw-hinweis" value="${esc(d.hinweis)}">
+        <button class="akt" onclick="app.abwZeitraumSpeichern()">Weiter</button>`;
+    } else if (form.schritt === 2) {
+      inhalt.innerHTML = `
+        <p style="font-size:14px; color:var(--muted);">Ist eine <b>Aufgabenübergabe</b> erforderlich?
+        Falls ja, bitte 50–250 Wörter (Aufgaben, Fristen, Vertretung, wichtige Infos).</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="akt gruen" onclick="app.abwUebergabe(true)">Ja, erforderlich</button>
+          <button class="akt grau" onclick="app.abwUebergabe(false)">Nein</button>
+        </div>
+        <div id="abw-uebergabe-feld" class="${d.uebergabe ? "" : "invisible"}">
+          <textarea id="abw-uebergabe-text" oninput="app.wortZaehlerUpdate('abw-uebergabe-text')"
+            placeholder="50–250 Wörter …">${esc(d.uebergabeText)}</textarea>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <button class="klein" onclick="app.fuelleFeld('abw-uebergabe-text', 49)">49</button>
+            <button class="klein" onclick="app.fuelleFeld('abw-uebergabe-text', 50)">50</button>
+            <button class="klein" onclick="app.fuelleFeld('abw-uebergabe-text', 250)">250</button>
+            <button class="klein" onclick="app.fuelleFeld('abw-uebergabe-text', 251)">251</button>
+            <div class="wortzaehler" id="abw-uebergabe-text-count"></div>
+          </div>
+          <button class="akt" onclick="app.abwUebergabePruefen()">Weiter</button>
+        </div>`;
+      if (d.uebergabe) this.wortZaehlerUpdate("abw-uebergabe-text");
+    } else {
+      this.abwErreichbarkeitRendern();
+    }
+  },
+
+  abwErreichbarkeitRendern() {
+    const d = state.abwForm.daten;
+    el("abw-formular-inhalt").innerHTML = `
+      <label>Erreichbarkeit</label>
+      <div>${ERREICHBARKEIT.map(e =>
+        `<button class="klein" style="margin:4px;" onclick="app.abwErreichbarkeit('${e.id}')">${e.label}</button>`
+      ).join("")}</div>`;
+  },
+
+  abwGrund(grund) {
+    state.abwForm.daten.grund = grund;
+    state.abwForm.schritt = 1;
+    this.abwSchrittRendern();
+  },
+
+  abwZeitraumSpeichern() {
+    const d = state.abwForm.daten;
+    d.von = el("abw-von").value.trim();
+    d.bis = el("abw-bis").value.trim();
+    d.rueckkehr = el("abw-rueckkehr").value.trim();
+    d.hinweis = el("abw-hinweis") ? el("abw-hinweis").value.trim() : "";
+
+    const von = parseDatum(d.von), bis = parseDatum(d.bis), rueck = parseDatum(d.rueckkehr);
+    if (!von || !bis || !rueck) {
+      el("abw-formular-inhalt").insertAdjacentHTML("beforeend",
+        `<div class="fehlerliste">⚠️ Datumsformat ungültig. Bitte TT.MM.JJJJ verwenden.</div>`);
+      return;
+    }
+    if (bis < von) {
+      el("abw-formular-inhalt").insertAdjacentHTML("beforeend",
+        `<div class="fehlerliste">⚠️ Das Enddatum liegt vor dem Startdatum.</div>`);
+      return;
+    }
+    state.abwForm.schritt = 2;
+    this.abwSchrittRendern();
+  },
+
+  abwUebergabe(ja) {
+    state.abwForm.daten.uebergabe = ja;
+    if (!ja) {
+      state.abwForm.schritt = 3;
+      this.abwSchrittRendern();
+    } else {
+      this.abwSchrittRendern();
+    }
+  },
+
+  abwUebergabePruefen() {
+    const text = el("abw-uebergabe-text").value;
+    const n = zaehleWoerter(text);
+    if (n < 50 || n > 250) {
+      el("abw-uebergabe-text-count").textContent =
+        `${n} Wörter – erlaubt sind 50–250.`;
+      el("abw-uebergabe-text-count").className = "wortzaehler fehler";
+      return;
+    }
+    state.abwForm.daten.uebergabeText = text.trim();
+    state.abwForm.schritt = 3;
+    this.abwSchrittRendern();
+  },
+
+  abwKurzSpeichern() {
+    const d = state.abwForm.daten;
+    d.von = el("abw-von").value.trim();
+    d.dauer = el("abw-dauer").value.trim();
+    d.hinweis = el("abw-hinweis") ? el("abw-hinweis").value.trim() : "";
+    if (!parseDatum(d.von) || !d.dauer) {
+      el("abw-formular-inhalt").insertAdjacentHTML("beforeend",
+        `<div class="fehlerliste">⚠️ Bitte Beginn (TT.MM.JJJJ) und Dauer angeben.</div>`);
+      return;
+    }
+    state.abwForm.schritt = 1;
+    this.abwSchrittRendern();
+  },
+
+  abwErreichbarkeit(wert) {
+    state.abwForm.daten.erreichbarkeit = wert;
+    this.abwSpeichern();
+  },
+
+  abwSpeichern() {
+    const d = state.abwForm.daten;
+    const kurz = state.abwForm.typ === "kurz";
+    state.abwCounter += 1;
+    const id = "ABW-" + String(state.abwCounter).padStart(4, "0");
+
+    const eintrag = {
+      id, typ: state.abwForm.typ, grund: d.grund || "Kurzfristige Abwesenheit",
+      von: d.von, bis: kurz ? "" : d.bis, rueckkehr: kurz ? "" : d.rueckkehr,
+      dauer: d.dauer, erreichbarkeit: d.erreichbarkeit,
+      uebergabe: d.uebergabe ? d.uebergabeText : "",
+      hinweis: d.hinweis, status: kurz ? "aktiv" : "eingereicht",
+      verlaengerungBeantragt: false, erstellt: jetzt(),
+    };
+    state.abwesenheiten.unshift(eintrag);
+    state.abwForm = null;
+    el("abw-formular").classList.add("invisible");
+    speichern();
+
+    markCheck("abw_antrag");
+    markCheck("abw_log");
+    if (kurz) markCheck("abw_aktiv");
+    logEintrag("Abwesenheit", kurz ? "Kurzfristige Abwesenheit aktiv" : "Abwesenheit eingereicht",
+      `${id} · ${d.von}–${d.bis || d.dauer} · ${d.grund || "kurzfristig"}`);
+
+    this.abwUebersichtRendern();
+    this.abwListeRendern();
+    this.statsRendern();
+  },
+
+  abwAktion(id, aktion) {
+    const abw = state.abwesenheiten.find(a => a.id === id);
+    if (!abw) return;
+
+    if (aktion === "genehmigen") {
+      if (abw.status === "eingereicht") {
+        abw.status = "genehmigt";
+        markCheck("abw_genehmigt");
+        logEintrag("Abwesenheit", "Abwesenheit genehmigt", `${id} · wird zum Start aktiv`);
+      } else if (abw.verlaengerungBeantragt) {
+        abw.verlaengerungBeantragt = false;
+        abw.bis = abw.neuesEnde;
+        abw.rueckkehr = abw.neuesEnde;
+        abw.status = "verlaengert";
+        markCheck("abw_verl_ok");
+        logEintrag("Abwesenheit", "Verlängerung bestätigt", `${id} · neues Ende: ${abw.neuesEnde}`);
+      }
+    } else if (aktion === "ablehnen") {
+      abw.status = "abgelehnt";
+      markCheck("abw_abgelehnt");
+      logEintrag("Abwesenheit", "Abwesenheit abgelehnt", id);
+    } else if (aktion === "aktivieren") {
+      abw.status = "aktiv";
+      markCheck("abw_aktiv");
+      logEintrag("Abwesenheit", "Abwesenheit aktiv", `${id} · Rolle 💤 Abwesend vergeben`);
+    } else if (aktion === "beenden") {
+      abw.status = "beendet";
+      logEintrag("Abwesenheit", "Abwesenheit beendet", `${id} · Rolle entfernt`);
+    } else if (aktion === "autoBeenden") {
+      abw.status = "beendet";
+      markCheck("abw_auto");
+      logEintrag("Abwesenheit", "Abwesenheit automatisch beendet", `${id} · Rolle entfernt`);
+    }
+
+    speichern();
+    this.abwUebersichtRendern();
+    this.abwListeRendern();
+    this.statsRendern();
+  },
+
+  abwVerlaengerung() {
+    const aktiv = state.abwesenheiten.find(a =>
+      ["genehmigt", "aktiv", "verlaengert"].includes(a.status));
+    if (!aktiv) {
+      logEintrag("Abwesenheit", "Verlängerung nicht möglich", "Keine aktive Abwesenheit");
+      return;
+    }
+    const eingabe = prompt(`Neues Enddatum für ${aktiv.id} (aktuelles Ende: ${aktiv.bis || aktiv.dauer})\nFormat TT.MM.JJJJ:`, "");
+    if (!eingabe) return;
+    const d = parseDatum(eingabe);
+    if (!d) { alert("Ungültiges Format. Bitte TT.MM.JJJJ verwenden."); return; }
+    aktiv.verlaengerungBeantragt = true;
+    aktiv.neuesEnde = formatDatum(d);
+    markCheck("abw_verl_beantragt");
+    logEintrag("Abwesenheit", "Verlängerung beantragt", `${aktiv.id} · neues Ende: ${aktiv.neuesEnde}`);
+    speichern();
+    this.abwUebersichtRendern();
+    this.abwListeRendern();
+  },
+
+  abwRueckkehr() {
+    const aktiv = state.abwesenheiten.find(a => ["aktiv", "genehmigt", "verlaengert"].includes(a.status));
+    if (!aktiv) {
+      logEintrag("Abwesenheit", "Rückkehr nicht möglich", "Keine aktive Abwesenheit");
+      return;
+    }
+    aktiv.status = "beendet";
+    markCheck("abw_rueckkehr");
+    logEintrag("Abwesenheit", "Rückkehr gemeldet", `${aktiv.id} · Rolle 💤 Abwesend entfernt`);
+    speichern();
+    this.abwUebersichtRendern();
+    this.abwListeRendern();
+    this.statsRendern();
+  },
+
+  abwMeine() {
+    const meine = state.abwesenheiten.filter(a => !["beendet", "abgelehnt"].includes(a.status));
+    if (!meine.length) {
+      logEintrag("Abwesenheit", "Meine Abwesenheiten", "Keine aktive Abwesenheit 🎉");
+      return;
+    }
+    logEintrag("Abwesenheit", "Meine Abwesenheiten abgefragt",
+      meine.map(a => `${a.id} (${a.status})`).join(", "));
+  },
+
+  abwUebersichtRendern() {
+    const container = el("abw-uebersicht");
+    if (!container) return;
+    const aktive = state.abwesenheiten.filter(a =>
+      ["aktiv", "genehmigt", "verlaengert"].includes(a.status));
+    if (!aktive.length) {
+      container.innerHTML = `<div class="hinweis">💤 Aktuelle Abwesenheiten – niemand ist abwesend. 🎉</div>`;
+      return;
+    }
+    container.innerHTML = `<div style="font-weight:600; margin-bottom:8px;">💤 AKTUELLE ABWESENHEITEN</div>` +
+      aktive.map(a => `<div class="karte">
+        <div class="top"><b>👤 Mitglied</b> ${badge(a.status, ABW_STATUS)}</div>
+        <div class="felder">
+          Team: Team · Status: ${ABW_STATUS[a.status].label}<br>
+          Von: ${esc(a.von)} Bis: ${esc(a.bis || a.dauer)}<br>
+          📡 ${esc(a.erreichbarkeit)}${a.verlaengerungBeantragt ? `<br>🔄 Verlängerung beantragt bis ${esc(a.neuesEnde)}` : ""}
+        </div></div>`).join("");
+  },
+
+  abwListeRendern() {
+    const container = el("abw-liste");
+    if (!container) return;
+    if (!state.abwesenheiten.length) {
+      container.innerHTML = `<div class="hinweis">Noch keine Abwesenheiten.</div>`;
+      return;
+    }
+    const leitung = state.sicht === "leitung";
+    container.innerHTML = state.abwesenheiten.map(a => {
+      let buttons = "";
+      if (leitung) {
+        if (a.status === "eingereicht") {
+          buttons += `<button class="akt gruen" onclick="app.abwAktion('${a.id}', 'genehmigen')">✅ Genehmigen</button>`;
+          buttons += `<button class="akt rot" onclick="app.abwAktion('${a.id}', 'ablehnen')">✖️ Ablehnen</button>`;
+        }
+        if (a.verlaengerungBeantragt) {
+          buttons += `<button class="akt gruen" onclick="app.abwAktion('${a.id}', 'genehmigen')">🔄 Verlängerung bestätigen</button>`;
+        }
+        if (a.status === "genehmigt") {
+          buttons += `<button class="akt" onclick="app.abwAktion('${a.id}', 'aktivieren')">🟣 Aktivieren</button>`;
+        }
+        if (a.status === "aktiv") {
+          buttons += `<button class="akt grau" onclick="app.abwAktion('${a.id}', 'autoBeenden')">⚫ Automatisch beenden</button>`;
+        }
+      } else {
+        buttons = `<span class="hinweis">Teammitglied-Sicht: nur die Serverleitung kann genehmigen/ablehnen.</span>`;
+      }
+      return `<div class="karte">
+        <div class="top"><b>${a.id}</b> ${badge(a.status, ABW_STATUS)}</div>
+        <div class="felder">
+          ${a.typ === "kurz" ? "🚨 kurzfristig · " : ""}Grund: ${esc(a.grund)} ·
+          ${esc(a.von)} – ${esc(a.bis || a.dauer)} · 📡 ${esc(a.erreichbarkeit)}
+          ${a.uebergabe ? `<br>📋 Übergabe: ${esc(a.uebergabe.substring(0, 100))}…` : ""}
+        </div>
+        <div class="aktionen">${buttons}</div>
+      </div>`;
+    }).join("");
+  },
+
+  /* --- Tickets ---------------------------------------------------------- */
+
+  ticketErstellen() {
+    const typKey = el("ticket-typ").value;
+    const typ = TICKET_TYPEN[typKey];
+    const betreff = el("ticket-betreff").value.trim() || "Kein Betreff";
+    state.ticketCounter += 1;
+    const id = "TKT-" + String(state.ticketCounter).padStart(4, "0");
+    state.tickets.unshift({ id, typ: typKey, typLabel: typ.emoji + " " + typ.label,
+      betreff, status: "offen", erstellt: jetzt() });
+    speichern();
+    markCheck("ticket_erstellt");
+    logEintrag("Tickets", "Ticket erstellt", `${id} · ${typ.emoji} ${typ.label} · ${betreff}`);
+    el("ticket-betreff").value = "";
+    this.ticketListeRendern();
+    this.statsRendern();
+  },
+
+  ticketSchliessen(id) {
+    const ticket = state.tickets.find(t => t.id === id);
+    if (!ticket) return;
+    ticket.status = "geschlossen";
+    markCheck("ticket_geschlossen");
+    logEintrag("Tickets", "Ticket geschlossen", `${id} · ${ticket.typLabel}`);
+    speichern();
+    this.ticketListeRendern();
+    this.statsRendern();
+  },
+
+  ticketListeRendern() {
+    const container = el("ticket-liste");
+    if (!container) return;
+    if (!state.tickets.length) {
+      container.innerHTML = `<div class="hinweis">Noch keine Tickets.</div>`;
+      return;
+    }
+    container.innerHTML = state.tickets.map(t => `<div class="karte">
+      <div class="top"><b>${t.id} · ${esc(t.typLabel)}</b>
+        ${t.status === "offen"
+          ? `<span class="badge" style="background:var(--blue);">🟢 Offen</span>`
+          : `<span class="badge" style="background:var(--neutral);">⚫ Geschlossen</span>`}</div>
+      <div class="felder">${esc(t.betreff)}<br>Erstellt: ${esc(t.erstellt)}</div>
+      ${t.status === "offen"
+        ? `<div class="aktionen"><button class="akt grau" onclick="app.ticketSchliessen('${t.id}')">🔒 Ticket schließen</button></div>`
+        : ""}
+    </div>`).join("");
+  },
+
+  /* --- Moderation ------------------------------------------------------- */
+
+  modAktionGeaendert() {
+    const istTimeout = el("mod-aktion").value === "timeout";
+    el("mod-dauer").parentElement.classList.toggle("invisible", !istTimeout);
+    if (istTimeout) this.modDauerVorschau();
+  },
+
+  modDauerVorschau() {
+    const sekunden = parseDauer(el("mod-dauer").value);
+    const feld = el("mod-dauer-vorschau");
+    if (sekunden === null) {
+      feld.textContent = "⚠️ Ungültiges Format – Beispiele: 10m, 1h, 2h30m, 1d";
+      feld.className = "wortzaehler fehler";
+    } else {
+      feld.textContent = `= ${sekunden} Sekunden`;
+      feld.className = "wortzaehler ok";
+    }
+  },
+
+  modAusfuehren() {
+    const mitgliedId = parseInt(el("mod-mitglied").value, 10);
+    const mitglied = MITGLIEDER.find(m => m.id === mitgliedId);
+    const aktion = el("mod-aktion").value;
+    const grund = el("mod-grund").value.trim() || "Keine Angabe";
+    const dauer = el("mod-dauer").value.trim();
+
+    if (aktion === "timeout") {
+      const sekunden = parseDauer(dauer);
+      if (sekunden === null) {
+        el("mod-ergebnis").innerHTML = `<div class="fehlerliste">⚠️ Ungültige Dauer.</div>`;
+        return;
+      }
+    }
+
+    state.aktionen.unshift({ mitglied: mitglied.name, aktion, grund, dauer, zeit: jetzt() });
+    const labels = { warn: "⚠️ Verwarnung", timeout: "🔇 Timeout", kick: "👢 Kick", ban: "🔨 Ban" };
+    markCheck({ warn: "mod_warn", timeout: "mod_timeout", kick: "mod_kick", ban: "mod_ban" }[aktion]);
+    logEintrag("Moderation", labels[aktion], `${mitglied.name} · Grund: ${grund}${aktion === "timeout" ? " · " + dauer : ""}`);
+    speichern();
+    el("mod-ergebnis").innerHTML = `<div class="erfolg">✅ ${labels[aktion]} für
+      <b>${esc(mitglied.name)}</b> ausgeführt (Punishment-Log geschrieben).</div>`;
+    this.modListeRendern();
+    this.statsRendern();
+  },
+
+  modListeRendern() {
+    const container = el("mod-liste");
+    if (!container) return;
+    if (!state.aktionen.length) {
+      container.innerHTML = `<div class="hinweis">Noch keine Aktionen.</div>`;
+      return;
+    }
+    container.innerHTML = state.aktionen.map(a => `<div class="log-eintrag">
+      <span class="zeit">${esc(a.zeit)}</span><b>${esc(a.mitglied)}</b> –
+      ${esc(a.aktion)} – ${esc(a.grund)}${a.dauer ? " · " + esc(a.dauer) : ""}
+    </div>`).join("");
+  },
+
+  /* --- Economy ---------------------------------------------------------- */
+
+  ecoRendern() {
+    const tabelle = el("eco-tabelle");
+    tabelle.innerHTML = Object.keys(state.einkommen).map(rolle => {
+      const wert = state.einkommen[rolle];
+      return `<tr><td>${esc(rolle)}</td>
+        <td><input type="number" value="${wert === null ? "" : wert}" placeholder="variabel"
+          onchange="app.ecoSetzen('${esc(rolle)}', this.value)" style="width:140px;"></td></tr>`;
+    }).join("");
+
+    const optionen = MITGLIEDER.map(m => `<option value="${m.id}">${esc(m.name)}</option>`).join("");
+    el("eco-von").innerHTML = optionen;
+    el("eco-nach").innerHTML = optionen;
+    this.ecoListeRendern();
+  },
+
+  ecoSetzen(rolle, wert) {
+    const n = wert === "" ? null : parseInt(wert, 10);
+    if (wert !== "" && (isNaN(n) || n < 0)) { alert("Ungültiger Wert"); return; }
+    state.einkommen[rolle] = n;
+    speichern();
+    logEintrag("Economy", "Einkommen angepasst", `${rolle}: ${n === null ? "variabel" : n + " €"}`);
+  },
+
+  konto(id) {
+    if (!state.konten[id]) state.konten[id] = { bar: 500, bank: 1000 };
+    return state.konten[id];
+  },
+
+  ecoUeberweisen() {
+    const von = parseInt(el("eco-von").value, 10);
+    const nach = parseInt(el("eco-nach").value, 10);
+    const betrag = parseInt(el("eco-betrag").value, 10);
+    if (von === nach) { el("eco-ergebnis").innerHTML = `<div class="fehlerliste">⚠️ Absender und Empfänger identisch.</div>`; return; }
+    if (!betrag || betrag < 1) { el("eco-ergebnis").innerHTML = `<div class="fehlerliste">⚠️ Ungültiger Betrag.</div>`; return; }
+    const kVon = this.konto(von), kNach = this.konto(nach);
+    if (kVon.bank < betrag) { el("eco-ergebnis").innerHTML = `<div class="fehlerliste">⚠️ Nicht genug Guthaben auf dem Bankkonto (${kVon.bank} €).</div>`; return; }
+    kVon.bank -= betrag;
+    kNach.bank += betrag;
+    speichern();
+    markCheck("eco_ueberweisung");
+    const nameVon = MITGLIEDER.find(m => m.id === von).name;
+    const nameNach = MITGLIEDER.find(m => m.id === nach).name;
+    logEintrag("Economy", "Überweisung", `${nameVon} → ${nameNach}: ${betrag} €`);
+    el("eco-ergebnis").innerHTML = `<div class="erfolg">✅ ${betrag} € von
+      <b>${esc(nameVon)}</b> an <b>${esc(nameNach)}</b> überwiesen.</div>`;
+    this.ecoListeRendern();
+    this.statsRendern();
+  },
+
+  ecoDaily() {
+    MITGLIEDER.forEach(m => { this.konto(m.id).bank += 100; });
+    speichern();
+    markCheck("eco_daily");
+    logEintrag("Economy", "Daily Reward", "Alle Mitglieder +100 €");
+    this.ecoListeRendern();
+    this.statsRendern();
+  },
+
+  ecoEinkommen() {
+    let summe = 0, details = [];
+    MITGLIEDER.forEach(m => {
+      for (const rolle of m.rollen) {
+        const betrag = state.einkommen[rolle];
+        if (betrag) { this.konto(m.id).bank += betrag; summe += betrag;
+          details.push(`${m.name} (${rolle}): +${betrag} €`); }
+      }
+    });
+    speichern();
+    markCheck("eco_einkommen");
+    logEintrag("Economy", "Tages-Einkommen ausgezahlt", `Gesamt: ${summe} €`);
+    this.ecoListeRendern();
+    this.statsRendern();
+  },
+
+  ecoListeRendern() {
+    const container = el("eco-liste");
+    if (!container) return;
+    const zeilen = MITGLIEDER.map(m => {
+      const k = this.konto(m.id);
+      return { name: m.name, rollen: m.rollen.join(", "), gesamt: k.bar + k.bank,
+               bar: k.bar, bank: k.bank };
+    }).sort((a, b) => b.gesamt - a.gesamt);
+    container.innerHTML = zeilen.map((z, i) => `<div class="karte">
+      <div class="top"><b>#${i + 1} ${esc(z.name)}</b>
+        <b>${z.gesamt} €</b></div>
+      <div class="felder">Rollen: ${esc(z.rollen)} · Bargeld: ${z.bar} € · Bank: ${z.bank} €</div>
+    </div>`).join("");
+    if (zeilen.length) markCheck("eco_leaderboard");
+  },
+
+  /* --- AutoMod ---------------------------------------------------------- */
+
+  amLaden() {
+    el("am-spam").value = state.automod.spam;
+    el("am-fenster").value = state.automod.fenster;
+    el("am-eskalation").value = state.automod.eskalation;
+    el("am-mention").value = state.automod.mention;
+    el("am-link").value = state.automod.link ? "1" : "0";
+  },
+
+  amSpeichern() {
+    state.automod = {
+      spam: parseInt(el("am-spam").value, 10) || 6,
+      fenster: parseInt(el("am-fenster").value, 10) || 5,
+      eskalation: parseInt(el("am-eskalation").value, 10) || 3,
+      mention: parseInt(el("am-mention").value, 10) || 4,
+      link: el("am-link").value === "1",
+    };
+    speichern();
+    logEintrag("AutoMod", "Konfiguration gespeichert",
+      `Spam: ${state.automod.spam}/${state.automod.fenster}s · Mention: ${state.automod.mention} · Link: ${state.automod.link ? "an" : "aus"}`);
+  },
+
+  amBeispiel(typ) {
+    if (typ === "spam") {
+      el("am-text").value = "Werbung Werbung Werbung Werbung Werbung Werbung Werbung schaut mal auf meiner Seite vorbei";
+      el("am-anz-mention").value = 0;
+    } else if (typ === "mention") {
+      el("am-text").value = "Hey @everyone schaut mal @hier @und @hier auch!";
+      el("am-anz-mention").value = 6;
+    } else if (typ === "link") {
+      el("am-text").value = "Kommt auf meinen Server: https://discord.gg/abcdef";
+      el("am-anz-mention").value = 0;
+    } else {
+      el("am-text").value = "Hallo zusammen, wie läuft euer RP-Einsatz heute?";
+      el("am-anz-mention").value = 0;
+    }
+  },
+
+  amPruefen() {
+    const text = el("am-text").value;
+    const mentions = parseInt(el("am-anz-mention").value, 10) || 0;
+    const cfg = state.automod;
+    const ergebnisse = [];
+
+    // Spam: simuliert Nachrichten im Zeitfenster
+    const anzahlImFenster = cfg.spam; // simuliert: genau an der Grenze
+    if (anzahlImFenster >= cfg.spam) {
+      ergebnisse.push({ typ: "spam", text: `Spam erkannt: ${anzahlImFenster} Nachrichten in ${cfg.fenster}s (Grenze: ${cfg.spam})` });
+      markCheck("am_spam");
+    }
+    if (mentions > cfg.mention) {
+      ergebnisse.push({ typ: "mention", text: `Mention-Spam: ${mentions} Erwähnungen (max. ${cfg.mention})` });
+      markCheck("am_mention");
+    }
+    if (cfg.link && /discord\.gg\/|discord\.com\/invite\//i.test(text)) {
+      ergebnisse.push({ typ: "link", text: "Einladungs-Link blockiert: " + text.trim().substring(0, 60) });
+      markCheck("am_link");
+    }
+
+    const html = ergebnisse.length
+      ? `<div class="fehlerliste"><b>🛡️ AutoMod hat zugeschlagen:</b><ul>
+          ${ergebnisse.map(e => `<li>${esc(e.text)}</li>`).join("")}</ul>
+          ${ergebnisse.length >= cfg.eskalation
+            ? `🔇 <b>Auto-Timeout</b> verhängt (${ergebnisse.length} Verstöße ≥ Grenze ${cfg.eskalation}).`
+            : `Verstöße: ${ergebnisse.length} – bei ${cfg.eskalation} folgt ein Timeout.`}
+         </div>`
+      : `<div class="erfolg">✅ Nachricht ist nicht aufgefallen – kein AutoMod-Verstoß.</div>`;
+
+    if (ergebnisse.length >= cfg.eskalation) markCheck("am_timeout");
+    el("am-ergebnis").innerHTML = html;
+    logEintrag("AutoMod", "Nachricht geprüft",
+      ergebnisse.length ? ergebnisse.map(e => e.typ).join(", ") + " Verstöße" : "kein Verstoß");
+    this.statsRendern();
+  },
+
+  /* --- Logs ------------------------------------------------------------- */
+
+  logsRendern() {
+    const container = el("log-liste");
+    const filter = el("log-filter");
+    if (!container) return;
+
+    const kategorien = [...new Set(state.logs.map(l => l.kategorie))].sort();
+    const aktueller = filter.value;
+    filter.innerHTML = `<option value="">Alle Kategorien</option>` +
+      kategorien.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join("");
+    filter.value = kategorien.includes(aktueller) ? aktueller : "";
+
+    const eintraege = filter.value
+      ? state.logs.filter(l => l.kategorie === filter.value)
+      : state.logs;
+
+    if (!eintraege.length) {
+      container.innerHTML = `<div class="hinweis">Noch keine Logs.</div>`;
+      return;
+    }
+    container.innerHTML = eintraege.map(l => `<div class="log-eintrag">
+      <span class="zeit">${esc(l.zeit)}</span><b>[${esc(l.kategorie)}]</b> ${esc(l.titel)}
+      ${l.details ? `<br><span style="color:var(--muted);">${esc(l.details)}</span>` : ""}
+    </div>`).join("");
+  },
+
+  logsLeeren() {
+    state.logs = [];
+    speichern();
+    this.logsRendern();
+  },
+
+  /* --- Initialisierung -------------------------------------------------- */
+
+  initFormulare() {
+    // Ticket-Typen
+    el("ticket-typ").innerHTML = Object.keys(TICKET_TYPEN).map(k =>
+      `<option value="${k}">${TICKET_TYPEN[k].emoji} ${TICKET_TYPEN[k].label}</option>`).join("");
+    // Mitglieder
+    el("mod-mitglied").innerHTML = MITGLIEDER.map(m =>
+      `<option value="${m.id}">${esc(m.name)} (${esc(m.rollen.join(", "))})</option>`).join("");
+    el("sicht").value = state.sicht || "leitung";
+    this.amLaden();
+    this.modAktionGeaendert();
+  },
+};
+
+// Auswahl-Elemente initial befüllen & ersten Tab zeigen
+app.initFormulare();
+app.zeigeTab("uebersicht");
+</script>
+</body>
+</html>

@@ -1,31 +1,31 @@
 {
   "embeds": [
     {
-      "title": "🚪 Team-Abmeldung",
-      "description": "Du bist für einige Tage nicht da? Melde dich ab, damit das Team Bescheid weiß.\n\nMit `/abmelden jetzt` kannst du dich abmelden. Nach Ablauf deiner Abmeldung wird alles automatisch zurückgesetzt.",
-      "color": 15965202,
+      "title": "💤 Team-Abwesenheit",
+      "description": "Du bist mehrere Tage nicht verfügbar?\nMelde deine Abwesenheit hier an.\nPrivate Details sind nicht erforderlich.\n\n**Ab 3 Kalendertagen** soll eine Abwesenheit grundsätzlich gemeldet werden. Kürzere Abwesenheiten können freiwillig gemeldet werden.",
+      "color": 5793266,
       "footer": {
-        "text": "🌌 NovaRP • Community & Roleplay"
+        "text": "GalaxyBot • Team-Abwesenheitssystem"
       },
       "fields": [
         {
-          "name": "✍️ Abmelden",
-          "value": "`/abmelden jetzt` – öffnet das Formular",
+          "name": "💤 Abwesenheit melden",
+          "value": "Mehrstufiges Formular: Grund → Zeitraum → Übergabe → Erreichbarkeit",
           "inline": false
         },
         {
-          "name": "❌ Beenden",
-          "value": "`/abmelden entfernen` – Abmeldung vorzeitig beenden",
+          "name": "🚨 Kurzfristig abmelden",
+          "value": "Beginn + Dauer + Erreichbarkeit – sofort aktiv, keine Freigabe nötig",
           "inline": false
         },
         {
-          "name": "📋 Übersicht",
-          "value": "`/abmelden liste` – wer ist aktuell abwesend?",
+          "name": "🔄 Verlängern / ✅ Rückkehr",
+          "value": "Verlängerungen müssen von der Teamleitung bestätigt werden",
           "inline": false
         },
         {
-          "name": "👤 Berechtigung",
-          "value": "Nur ausgewählte Team-Rollen (Admin: `/abmelden setup`)",
+          "name": "🔐 Datenschutz",
+          "value": "„Privater Grund“ wird immer akzeptiert. Keine Gesundheitsdaten oder privaten Details.",
           "inline": false
         }
       ]
@@ -38,9 +38,42 @@
         {
           "type": 2,
           "style": 1,
-          "label": "🚪 Jetzt abmelden",
-          "custom_id": "abmelden_jetzt",
-          "emoji": "🚪"
+          "label": "Abwesenheit melden",
+          "custom_id": "abwesenheit_melden",
+          "emoji": "💤"
+        },
+        {
+          "type": 2,
+          "style": 2,
+          "label": "Meine Abwesenheit",
+          "custom_id": "abwesenheit_meine",
+          "emoji": "📅"
+        },
+        {
+          "type": 2,
+          "style": 2,
+          "label": "Abwesenheit verlängern",
+          "custom_id": "abwesenheit_verlaengern",
+          "emoji": "🔄"
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "components": [
+        {
+          "type": 2,
+          "style": 3,
+          "label": "Rückkehr melden",
+          "custom_id": "abwesenheit_rueckkehr",
+          "emoji": "✅"
+        },
+        {
+          "type": 2,
+          "style": 4,
+          "label": "Kurzfristig abmelden",
+          "custom_id": "abwesenheit_kurzfristig",
+          "emoji": "🚨"
         }
       ]
     }

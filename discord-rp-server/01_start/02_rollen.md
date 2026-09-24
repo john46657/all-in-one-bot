@@ -19,7 +19,7 @@ Rollen von **oben (höchste Rechte) nach unten** anlegen. Die Reihenfolge ist ma
 | 🎮 Event-Team | `#E67E22` | rp-events, Giveaways |
 | 📢 Social-Media-Team | `#FF69B4` | ankündigungen, Social-Media-Funktionen |
 | 🎥 Content Creator | `#00B0F4` | Eigene Inhalte teilen (keine Moderation) |
-| 🚪 Abgemeldet | `#95A5A6` | Indikator-Rolle – wird vom Bot bei Abmeldung vergeben/entfernt |
+| 💤 Abwesend | `#95A5A6` | Indikator-Rolle – wird vom Bot bei Abwesenheit vergeben/entfernt; **keine** permanenten Berechtigungsänderungen |
 
 ## 💎 Community-Rollen
 

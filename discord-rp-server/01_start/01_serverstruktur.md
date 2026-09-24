@@ -133,8 +133,9 @@ TempVoice-Befehle im eigenen Raum: `!voice name`, `!voice limit`, `!voice lock`,
 - 📢・team-news
 - 📋・team-aufgaben
 - 📋・bewerbungen-team (Appy leitet hierher weiter)
+- 📅・team-abwesenheit (Abwesenheits-Panel + Anträge, GalaxyBot)
+- 📅・abwesenheitsübersicht (aktuelle Abwesenheiten, GalaxyBot)
 - ⚠️・verwarnungen (interne Sicht)
-- 🚪・abmeldungen (Team-Abmeldungen, Bot postet automatisch)
 - 📁・team-dokumente
 - 🔊・team-besprechung (Voice)
 
@@ -153,3 +154,4 @@ TempVoice-Befehle im eigenen Raum: `!voice name`, `!voice limit`, `!voice lock`,
 | 🤖・bot-logs | Bot-Aktionen |
 | 📋・bewerbungs-logs | Bewerbungsereignisse (Appy) |
 | 💰・economy-logs | Economy-Transaktionen (UnbelievaBoat) |
+| 💤・abwesenheits-logs | Abwesenheitsereignisse (GalaxyBot) |

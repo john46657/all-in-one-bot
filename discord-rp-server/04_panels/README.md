@@ -28,7 +28,7 @@ Einheitliches Design: Farbe `#5865F2`, Footer `🌌 NovaRP • Community & Rolep
 | `10_ticket-erstellen.json` | 🎫 Tickets (Select-Menü, 6 Kategorien) | 🎫・ticket-erstellen |
 | `11_economy-info.json` | 💰 Economy-Info | 💰・economy-info |
 | `12_vorschlaege.json` | 💡 Vorschläge | 💡・vorschläge |
-| `13_abmelden.json` | 🚪 Team-Abmeldung | 🚪・abmeldungen |
+| `13_abmelden.json` | 💤 Team-Abwesenheit (5 Buttons) | 📅・team-abwesenheit |
 
 ## ⚠️ Vor dem Posten
 
@@ -39,9 +39,15 @@ Einheitliches Design: Farbe `#5865F2`, Footer `🌌 NovaRP • Community & Rolep
 
 ## 🎛️ Interaktive Panels
 
-`09_bewerbungen.json` und `10_ticket-erstellen.json` enthalten Select-Menü-Komponenten.
-Discos Hook kann diese **anzeigen**, aber die Interaktion muss von einem Bot verarbeitet werden:
-- Bewerbungen → **Appy** (custom_id `appy_application_select`)
-- Tickets → **GalaxyBot** (custom_id `galaxy_ticket_select`)
+`09_bewerbungen.json`, `10_ticket-erstellen.json` und `13_abmelden.json` enthalten
+interaktive Komponenten. Discohook kann diese posten, aber die Interaktion muss
+von einem Bot verarbeitet werden (persistente Views):
 
-Falls Appy/GalaxyBot diese IDs nicht unterstützen: Select-Menü im Bot- eigenen Format nachbauen und nur das Embed über Discohook posten.
+| Panel | Bot | Custom-IDs |
+|---|---|---|
+| Bewerbungen | **Appy** | `appy_application_select` |
+| Tickets | **GalaxyBot** | `ticket_typ_auswahl` (Select) + `ticket_schliessen` |
+| Team-Abwesenheit | **GalaxyBot** | `abwesenheit_melden`, `abwesenheit_meine`, `abwesenheit_verlaengern`, `abwesenheit_rueckkehr`, `abwesenheit_kurzfristig` |
+
+Die GalaxyBot-IDs sind 1:1 die `custom_id`s aus `galaxy-bot/cogs/` – das Panel
+funktioniert daher direkt mit dem Bot zusammen. Bewerbungen setzt Appy um.

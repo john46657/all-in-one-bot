@@ -1,78 +1,116 @@
-# 🚪 Abmelden-System (Team)
+# 💤 Team-Abwesenheitssystem
 
-Mitglieder ausgewählter Team-Rollen können sich für einige Tage abmelden. Das Team wird automatisch informiert, das Mitglied erhält eine Rolle und nach Ablauf wird alles automatisch zurückgesetzt.
+Mitglieder aller Team-Rollen können Abwesenheiten melden. Die Teamleitung
+genehmigt oder lehnt ab; zum Start wird die Abwesenheit automatisch aktiv und
+die Rolle `💤 Abwesend` vergeben, am Ende automatisch entfernt.
 
-**Bot:** GalaxyBot / eigenen Bot (Cog `abmelden.py`) · **Nur für Team-Rollen**
-
----
-
-## ⚙️ Berechtigung: welche Rollen dürfen sich abmelden?
-
-Ein Admin legt fest, welche Rollen berechtigt sind. **Mehrere Rollen gleichzeitig möglich.**
-
-| Befehl | Wirkung |
-|---|---|
-| `/abmelden setup` | Öffnet ein Select-Menü, mehrere Rollen gleichzeitig wählbar |
-| `/abmelden rolle_hinzufuegen rolle_id:<ID>` | Einzelne Rolle per ID hinzufügen |
-| `/abmelden rolle_entfernen rolle_id:<ID>` | Einzelne Rolle per ID entfernen |
-| `/abmelden berechtigt` | Zeigt alle berechtigten Rollen |
-
-**Rollen-ID finden:** Servereinstellungen → Rollen → Rolle rechtsklicken → ID kopieren.
-Berechtigung gilt, wenn ein Mitglied **eine** der hinterlegten Rollen hat (oder Administrator ist).
+**Bot:** GalaxyBot (Cog `cogs/absence.py`) · **Panel-Channel:** `📅・team-abwesenheit`
+**Übersicht:** `📅・abwesenheitsübersicht` (nur Team) · **Logs:** `💤・abwesenheits-logs`
 
 ---
 
-## 📝 Abmelden
+## 🎛️ Panel (5 Buttons)
+
+Das Panel wird einmalig gepostet:
 
 | Befehl | Wirkung |
 |---|---|
-| `/abmelden jetzt` | Öffnet das Abmelde-Modal |
-| `/abmelden entfernen` | Eigene Abmeldung vorzeitig beenden (Admins auch für andere) |
-| `/abmelden liste` | Zeigt alle aktuell Abgemeldeten (Team) |
+| `/abwesenheit panel` | Postet das Panel in `📅・team-abwesenheit` |
+| `/abwesenheit übersicht` | Aktualisiert die Abwesenheitsübersicht |
 
-### Modal-Felder
+| Button | Funktion |
+|---|---|
+| 💤 **Abwesenheit melden** | Mehrstufiges Formular (Grund → Zeitraum → Übergabe → Erreichbarkeit) |
+| 📅 **Meine Abwesenheit** | Zeigt die eigenen Abwesenheiten an |
+| 🔄 **Abwesenheit verlängern** | Neues Enddatum + optionaler Hinweis – Teamleitung muss bestätigen |
+| ✅ **Rückkehr melden** | Beendet die Abwesenheit vorzeitig, Rolle wird entfernt |
+| 🚨 **Kurzfristig abmelden** | Beginn + Dauer + Erreichbarkeit – sofort aktiv, keine Freigabe nötig |
+
+---
+
+## 📝 Formular (normale Abwesenheit)
+
+Automatisch erfasst: Discord-Name, Discord-ID, Team-Rolle, Antragstellungsdatum.
 
 | Feld | Pflicht | Hinweis |
 |---|---|---|
-| Grund | ✅ | z. B. Urlaub, Krankheit, Prüfungen |
-| Von | ✅ | `TT.MM.JJJJ` |
-| Bis | ✅ | `TT.MM.JJJJ` |
-| Vertretung | – | wer übernimmt die Aufgaben |
+| Grund | ✅ | Auswahl: Urlaub, Schule/Ausbildung, Arbeit, Private Gründe, Gesundheitliche Gründe, Technische Probleme, Sonstiges, **Privater Grund** |
+| Beginn | ✅ | `TT.MM.JJJJ` |
+| Ende | ✅ | `TT.MM.JJJJ` |
+| Voraussichtliche Rückkehr | ✅ | `TT.MM.JJJJ` |
+| Aufgabenübergabe erforderlich? | ✅ | Ja/Nein |
+| → Übergabe-Text | nur bei Ja | **50–250 Wörter**: Aufgaben, Fristen, Vertretung, wichtige Infos |
+| Erreichbarkeit | ✅ | 🟢 Erreichbar · 🟡 Eingeschränkt erreichbar · 🔴 Nicht erreichbar |
+
+Kurzfristige Abwesenheit: Beginn, voraussichtliche Dauer, Erreichbarkeit,
+optionaler Hinweis. **Keine** detaillierte private Begründung erforderlich.
+
+---
+
+## 🔖 Status
+
+| Status | Bedeutung |
+|---|---|
+| 🟡 Eingereicht | Antrag liegt vor, wartet auf Entscheidung |
+| 🟢 Genehmigt | Teamleitung hat genehmigt, noch nicht gestartet |
+| 🔴 Abgelehnt | Teamleitung hat abgelehnt |
+| 🔵 Verlängert | Verlängerung wurde bestätigt |
+| 🟣 Aktiv | Abwesenheit läuft, Rolle `💤 Abwesend` ist vergeben |
+| ⚫ Beendet | Rückkehr gemeldet oder Zeitraum abgelaufen, Rolle entfernt |
 
 ---
 
 ## 🔄 Ablauf
 
 ```
-1. Teammitglied führt /abmelden jetzt aus
-2. Modal ausfüllen (Grund, Von, Bis, Vertretung)
-3. Bot prüft Berechtigung + Datum
-4. Bot postet Embed in 🚪・abmeldungen (Team wird informiert)
-5. Rolle "Abgemeldet" wird vergeben
-6. Bot prüft alle 30 Minuten auf Ablauf
-7. Bei Ablauf: Rolle automatisch entfernt + Nachricht aktualisiert
-   "✅ Abmeldung abgelaufen - <user> ist wieder da."
-8. Abmeldung wird als inaktiv markiert (Archiv)
+Teammitglied meldet Abwesenheit
+        ↓
+System erstellt ID (ABW-0001)
+        ↓
+Status 🟡 Eingereicht  →  Panel-Nachricht mit ✅/✖️ Buttons
+        ↓
+Teamleitung entscheidet: 🟢 Genehmigt / 🔴 Abgelehnt
+        ↓
+Zum Startdatum: 🟣 Aktiv + Rolle 💤 Abwesend (automatisch)
+        ↓
+Erinnerung 1 Tag vor Ende (per DM)
+        ↓
+Rückkehr ✅ oder Ablauf: ⚫ Beendet + Rolle entfernt (automatisch)
+        ↓
+Jeder Schritt wird in 💤・abwesenheits-logs protokolliert
 ```
 
 ---
 
-## 🎛️ Benötigte Server-Einrichtung
+## 📅 Regeln
 
-1. **Rolle erstellen:** `Abgemeldet` (Farbe z. B. `#95A5A6`)
-   - Keine besonderen Rechte – nur ein sichtbarer Indikator
-   - Bot-Rolle muss **über** dieser Rolle stehen (sonst kann er sie nicht vergeben/entfernen)
-2. **Channel erstellen:** `🚪・abmeldungen` (Kategorie `🔐 TEAM`, nur Team sichtbar)
-3. Bot-Rechte: `Manage Roles`, `Send Messages`, `Embed Links`, `Read Message History`
-4. `/abmelden setup` ausführen → Rollen auswählen
-5. Fertig – Teammitglieder können `/abmelden jetzt` nutzen
+- Ab **3 Kalendertagen** soll eine Abwesenheit grundsätzlich gemeldet werden.
+- Kürzere Abwesenheiten können freiwillig oder auf Wunsch der Teamleitung gemeldet werden.
+- Ungeplante Abwesenheiten können nachträglich eingetragen werden (🚨 Kurzfristig).
+- Pro Mitglied ist nur eine aktive Abwesenheit möglich.
 
 ---
 
-## 🔒 Hinweise
+## 🔐 Datenschutz
 
-- Doppelte Abmeldungen werden blockiert (erst alte beenden)
-- `Bis` muss nach `Von` liegen
-- Abwesenheitsnotiz ist **nur für das Team sichtbar** (Privatsphäre)
-- Neue Abmeldungen überschreiben keine alten – pro Mitglied ist nur eine aktiv
-- Bei vorzeitigem Ende (`/abmelden entfernen`) wird die Rolle sofort entfernt
+Das System arbeitet datensparsam. **Nicht** erfragt werden:
+
+- Gesundheitsdaten / medizinische Informationen
+- private Dokumente
+- persönliche Details
+
+**„Privater Grund" muss immer akzeptiert werden** und ist eine voll gültige Angabe.
+
+---
+
+## 🎛️ Server-Einrichtung
+
+1. **Rolle:** `💤 Abwesend` (Farbe z. B. `#95A5A6`) – reine Indikator-Rolle,
+   **keine** permanenten Berechtigungsänderungen.
+2. **Channels:** `📅・team-abwesenheit` + `📅・abwesenheitsübersicht` (Kategorie `🔐 TEAM`),
+   `💤・abwesenheits-logs` (Kategorie `📊 LOGS`).
+   → Alles wird vom `setup/setup_server.py`-Skript automatisch angelegt.
+3. Bot-Rechte: `Manage Roles` (für `💤 Abwesend`), `Send Messages`, `Embed Links`,
+   `Read Message History`. Bot-Rolle muss über `💤 Abwesend` stehen.
+4. `/abwesenheit panel` einmal ausführen. Teammitglieder (alle Team-Rollen) können
+   das Panel sofort nutzen; genehmigen/ablehnen darf die Serverleitung.
