@@ -1,16 +1,16 @@
 """
-GalaxyBot - zentrale Server-Konfiguration.
+GalaxyBot - Konfigurations-Konstanten.
 
-Alle Channel-/Rollen-Namen stehen hier zentral. Der Bot löst sie zur Laufzeit
-auf. Namesänderungen sind möglich über:
-  1. .env Variablen (Channel-/Rollen-IDs)
-  2. den Settings-Override in der Datenbank (siehe settings.py)
+Diese Datei ist eine Dünnschicht über `server_config.json`: alle Werte werden
+daraus abgeleitet. Echte Anpassungen bitte über `server_config.json` oder die
+`/einstellungen`-Befehle vornehmen – nicht hier im Code!
 
-WICHTIG: Einmal an den eigenen Server anpassen bzw. das setup/setup_server.py
-Skript nutzen, das die Struktur 1:1 so anlegt.
+Für live anpassbare Werte in Cogs: `server_config.wert(...)` nutzen (nicht die
+Konstanten hier, die nur den Stand beim Starten widerspiegeln).
 """
 
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,45 +18,11 @@ load_dotenv()
 # Discord Bot Token (aus .env, NIEMALS direkt hier eintragen)
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-# --- Design-Richtlinien (siehe discord-rp-server/README.md) ---
-FARBE_INFO = 0x5865F2       # Blau – Standard/Info
-FARBE_ERFOLG = 0x2ECC71     # Grün
-FARBE_WARNUNG = 0xF1C40F    # Gelb
-FARBE_FEHLER = 0xE74C3C     # Rot
-FARBE_NEUTRAL = 0x95A5A6    # Grau
+import server_config as sc  # noqa: E402
 
-# Bewerbungs-/Abwesenheits-Statusfarben
-STATUS_FARBEN = {
-    "🟡": 0xF1C40F,   # In Prüfung / Eingereicht
-    "🔵": 0x3498DB,   # Rückfrage / Verlängert
-    "🟠": 0xE67E22,   # Vorstellungsgespräch
-    "🟢": 0x2ECC71,   # Angenommen / Genehmigt / Aktiv
-    "🔴": 0xE74C3C,   # Abgelehnt
-    "⚫": 0x95A5A6,   # Zurückgezogen / Beendet
-    "🟣": 0x9B59B6,   # Aktiv (Abwesenheit)
-}
+# --- Team-Rollen-Hierarchie (Index 0 = höchste Rechte) ---
+TEAM_ROLLEN = sc.hierarchie()
 
-# ---------------------------------------------------------------------------
-# Team-Rollen-Hierarchie: von oben (höchste Rechte) nach unten.
-# WICHTIG: Reihenfolge muss exakt der Rollen-Anordnung im Discord-Server
-# entsprechen. Der Index wird für Berechtigungs-Checks genutzt
-# (Index 0 = Serverleitung = darf alles).
-# ---------------------------------------------------------------------------
-TEAM_ROLLEN = [
-    "👑 Serverleitung",
-    "🛡️ Stellvertretende Serverleitung",
-    "💼 Management",
-    "🔧 Administration",
-    "🔨 Moderation",
-    "🎫 Support",
-    "📋 Bewerbungsteam",
-    "🎭 Fraktionsverwaltung",
-    "🎮 Event-Team",
-    "📢 Social-Media-Team",
-    "🎥 Content Creator",
-]
-
-# Indizes für Standard-Berechtigungen (je niedriger, desto mehr Rechte)
 IDX_SERVERLEITUNG = 0
 IDX_STELV_LEITUNG = 1
 IDX_MANAGEMENT = 2
@@ -66,61 +32,68 @@ IDX_SUPPORT = 5
 IDX_BEWERBUNGSTEAM = 6
 
 # --- Community-/System-Rollen ---
-ROLLE_ABWESEND = "💤 Abwesend"
-ROLLE_NEUER_BUEGER = "🆕 Neuer Bürger"
-ROLLE_MITGLIED = "👤 Mitglied"
-ROLLE_BOTS = "🤖 Bots"
+ROLLE_ABWESEND = sc.rolle("abwesend")
+ROLLE_NEUER_BUEGER = sc.rolle("neuer_buerger")
+ROLLE_MITGLIED = sc.rolle("mitglied")
+ROLLE_BOTS = sc.rolle("bots")
 
-# --- Channel: START ---
-CHANNEL_WILLKOMMEN = "👋・willkommen"
-CHANNEL_ANKUENDIGUNGEN = "📢・ankündigungen"
-
-# --- Channel: SUPPORT ---
-CHANNEL_TICKET_ERSTELLEN = "🎫・ticket-erstellen"
-
-# --- Channel: COMMUNITY ---
-CHANNEL_VORSCHLAEGE = "💡・vorschläge"
-CHANNEL_UMFRAGEN = "🗳️・umfragen"
-
-# --- Channel: TEAM ---
-CHANNEL_TEAM_ABWESENHEIT = "📅・team-abwesenheit"
-CHANNEL_ABWESENHEITSUEBERSICHT = "📅・abwesenheitsübersicht"
-CHANNEL_TEAM_CHAT = "💬・team-chat"
-
-# --- Channel: LOGS ---
-CHANNEL_MOD_LOGS = "📜・mod-logs"
-CHANNEL_MEMBER_LOGS = "👤・member-logs"
-CHANNEL_PUNISHMENT_LOGS = "🔨・punishment-logs"
-CHANNEL_ROLE_LOGS = "🎭・role-logs"
-CHANNEL_MESSAGE_LOGS = "💬・message-logs"
-CHANNEL_VOICE_LOGS = "🎙️・voice-logs"
-CHANNEL_BOT_LOGS = "🤖・bot-logs"
-CHANNEL_ABWESENHEITS_LOGS = "💤・abwesenheits-logs"
+# --- Channel ---
+CHANNEL_WILLKOMMEN = sc.channel("willkommen")
+CHANNEL_ANKUENDIGUNGEN = sc.channel("ankuendigungen")
+CHANNEL_TICKET_ERSTELLEN = sc.channel("ticket_erstellen")
+CHANNEL_VORSCHLAEGE = sc.channel("vorschlaege")
+CHANNEL_UMFRAGEN = sc.channel("umfragen")
+CHANNEL_TEAM_ABWESENHEIT = sc.channel("team_abwesenheit")
+CHANNEL_ABWESENHEITSUEBERSICHT = sc.channel("abwesenheitsuebersicht")
+CHANNEL_TEAM_CHAT = sc.channel("team_chat") or "💬・team-chat"
+CHANNEL_TICKET_ARCHIV = sc.channel("ticket_archiv") or sc.wert("transkripte", "channel") or ""
 
 # --- Kategorien ---
-KATEGORIE_TICKETS = "🎫 Tickets"
+KATEGORIE_TICKETS = sc.channel("kategorie_tickets")
+
+# --- Log-Channels ---
+CHANNEL_MOD_LOGS = sc.channel("mod_logs")
+CHANNEL_MEMBER_LOGS = sc.channel("member_logs")
+CHANNEL_PUNISHMENT_LOGS = sc.channel("punishment_logs")
+CHANNEL_ROLE_LOGS = sc.channel("role_logs")
+CHANNEL_MESSAGE_LOGS = sc.channel("message_logs")
+CHANNEL_VOICE_LOGS = sc.channel("voice_logs")
+CHANNEL_BOT_LOGS = sc.channel("bot_logs")
+CHANNEL_ABWESENHEITS_LOGS = sc.channel("abwesenheits_logs")
+
+# --- Farben ---
+FARBE_INFO = sc.farbe("info")
+FARBE_ERFOLG = sc.farbe("erfolg")
+FARBE_WARNUNG = sc.farbe("warnung")
+FARBE_FEHLER = sc.farbe("fehler")
+FARBE_NEUTRAL = sc.farbe("neutral")
+
+STATUS_FARBEN = {
+    "🟡": sc.status_farbe("gelb"),
+    "🔵": sc.status_farbe("blau"),
+    "🟠": sc.status_farbe("orange"),
+    "🟢": sc.status_farbe("gruen"),
+    "🔴": sc.status_farbe("rot"),
+    "⚫": sc.status_farbe("grau"),
+    "🟣": sc.status_farbe("lila"),
+}
 
 # --- Welcome-System ---
-WILLKOMMENS_TEXT = (
-    "👋 Willkommen auf unserem Server!\n\n"
-    "Schön, dass du da bist.\n\n"
-    "Lies dir zuerst unsere Regeln und Serverinformationen durch.\n\n"
-    "Danach kannst du dich in der Community beteiligen, am RP teilnehmen, "
-    "eine Bewerbung einreichen oder dich mit anderen Mitgliedern austauschen.\n\n"
-    "Viel Spaß!"
-)
+WILLKOMMENS_TEXT = sc.wert("willkommen", "text") or ""
 
-# --- AutoMod Standardwerte (über Settings anpassbar) ---
+# --- AutoMod ---
 AUTOMOD = {
-    "spam_nachrichten": 6,       # max. Nachrichten im Zeitfenster
-    "spam_zeitfenster": 5,       # Zeitfenster in Sekunden
-    "spam_timeout_ab": 3,        # wie oft spamden, bevor Timeout folgt
-    "mention_max": 4,            # max. Erwähnungen pro Nachricht
-    "link_blocken": True,        # discord.gg-Einladungen blocken
+    "spam_nachrichten": sc.wert("automod", "spam_nachrichten"),
+    "spam_zeitfenster": sc.wert("automod", "spam_zeitfenster"),
+    "spam_timeout_ab": sc.wert("automod", "spam_timeout_ab"),
+    "mention_max": sc.wert("automod", "mention_max"),
+    "link_blocken": sc.wert("automod", "link_blocken"),
 }
 
 # --- Team-Abwesenheit ---
 ABWESENHEIT = {
-    "meldepflicht_ab_tagen": 3,  # ab so vielen Tagen muss gemeldet werden
-    "erinnerung_vor_tagen": 1,   # Erinnerung X Tage vor Ende
+    "meldepflicht_ab_tagen": sc.wert("abwesenheit", "meldepflicht_ab_tagen"),
+    "erinnerung_vor_tagen": sc.wert("abwesenheit", "erinnerung_vor_tagen"),
+    "min_woerter": sc.wert("abwesenheit", "min_woerter"),
+    "max_woerter": sc.wert("abwesenheit", "max_woerter"),
 }

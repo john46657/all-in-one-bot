@@ -19,7 +19,8 @@ import unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import config  # noqa: E402
-from checks import hat_mindestens, ist_team, team_index  # noqa: E402
+import server_config as sc  # noqa: E402
+from checks import hat_mindestens, hat_befehl, ist_team, team_index  # noqa: E402
 
 
 def _text(anzahl_woerter: int) -> str:
@@ -171,6 +172,61 @@ class ConfigTests(unittest.TestCase):
 
     def test_status_farben_vollstaendig(self):
         self.assertEqual(len(config.STATUS_FARBEN), 7)
+
+
+class ServerConfigTests(unittest.TestCase):
+    """Tests für das neue server_config-System (lesend, ohne Seiteneffekte)."""
+
+    def test_verschmelzen_erweitert(self):
+        basis = {"a": 1, "b": {"c": 2}}
+        ueber = {"b": {"d": 3}, "e": 4}
+        ergebnis = sc._verschmelzen(basis, ueber)
+        self.assertEqual(ergebnis, {"a": 1, "b": {"c": 2, "d": 3}, "e": 4})
+
+    def test_verschmelzen_ueberschreibt(self):
+        self.assertEqual(sc._verschmelzen({"a": 1}, {"a": 2}), {"a": 2})
+
+    def test_hex_zu_int(self):
+        self.assertEqual(sc.hex_zu_int("3498DB"), 0x3498DB)
+        self.assertEqual(sc.hex_zu_int("#3498DB"), 0x3498DB)
+        self.assertEqual(sc.hex_zu_int(None), 0x5865F2)
+        self.assertEqual(sc.hex_zu_int(0x2ECC71), 0x2ECC71)
+        self.assertEqual(sc.hex_zu_int("kaputt"), 0x5865F2)
+
+    def test_wert_verschachtelt(self):
+        self.assertEqual(sc.wert("abwesenheit", "min_woerter"), 50)
+        self.assertEqual(sc.wert("abwesenheit", "max_woerter"), 250)
+        self.assertIsNone(sc.wert("abwesenheit", "gibt_es_nicht"))
+
+    def test_rolle_by_index(self):
+        self.assertEqual(sc.rolle_by_index(config.IDX_SERVERLEITUNG), "👑 Serverleitung")
+        self.assertEqual(sc.rolle_by_index(999), "")
+
+    def test_darf_befehl(self):
+        # moderation.ban → ab Administration (Index 3)
+        admin = _fake_member(["🔧 Administration"])
+        mod = _fake_member(["🔨 Moderation"])
+        self.assertTrue(sc.darf_befehl(admin, "moderation.ban"))
+        self.assertFalse(sc.darf_befehl(mod, "moderation.ban"))
+        # * → jedes Teammitglied
+        self.assertTrue(sc.darf_befehl(mod, "abwesenheit.nutzen"))
+        self.assertFalse(sc.darf_befehl(_fake_member(["👤 Mitglied"]), "abwesenheit.nutzen"))
+        # Administrator-Bypass
+        self.assertTrue(sc.darf_befehl(_fake_member([], administrator=True), "moderation.ban"))
+        # unbekannter Befehl
+        self.assertFalse(sc.darf_befehl(admin, "befehl.gibt.es.nicht"))
+
+    def test_hat_befehl_aus_checks(self):
+        self.assertTrue(hat_befehl(_fake_member(["🔧 Administration"]), "moderation.kick"))
+        self.assertFalse(hat_befehl(_fake_member(["🎫 Support"]), "moderation.kick"))
+
+    def test_ticket_typen_aus_config(self):
+        typen = sc.ticket_typen()
+        self.assertTrue(typen)
+        for t in typen:
+            self.assertIn("id", t)
+            self.assertIn("emoji", t)
+            self.assertIn("label", t)
 
 
 if __name__ == "__main__":

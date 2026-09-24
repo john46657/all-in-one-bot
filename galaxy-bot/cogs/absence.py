@@ -25,29 +25,15 @@ import discord
 from discord import app_commands
 from discord.ext import commands, tasks
 
-import config
-from checks import ist_team, hat_mindestens, IDX_STELV_LEITUNG
+import server_config as sc
+from checks import hat_befehl, benoetigt_befehl
 from database import get_connection, get_config, set_config
-from settings import get_setting
 from logging_utils import log_abwesenheit
 
 log = logging.getLogger("galaxy.abwesenheit")
 
-GRUENDE = [
-    ("Urlaub", "🌴"),
-    ("Schule/Ausbildung", "🎓"),
-    ("Arbeit", "💼"),
-    ("Private Gründe", "🔒"),
-    ("Gesundheitliche Gründe", "🤒"),
-    ("Technische Probleme", "🔧"),
-    ("Sonstiges", "📦"),
-    ("Privater Grund", "🤫"),
-]
-ERREICHBARKEIT = [
-    ("🟢 Erreichbar", "erreichbar", "🟢"),
-    ("🟡 Eingeschränkt erreichbar", "eingeschraenkt", "🟡"),
-    ("🔴 Nicht erreichbar", "nicht_erreichbar", "🔴"),
-]
+GRUENDE = [(g["label"], g["emoji"]) for g in sc.gruende()]
+ERREICHBARKEIT = [(e["label"], e["id"], e["emoji"]) for e in sc.erreichbarkeit()]
 STATUS_ANZEIGE = {
     "eingereicht": "🟡 Eingereicht",
     "genehmigt": "🟢 Genehmigt",
@@ -56,14 +42,14 @@ STATUS_ANZEIGE = {
     "aktiv": "🟣 Aktiv",
     "beendet": "⚫ Beendet",
 }
+_STATUS_FARBEN = {
+    "eingereicht": "gelb", "genehmigt": "gruen", "abgelehnt": "rot",
+    "verlaengert": "blau", "aktiv": "lila", "beendet": "grau",
+}
 
 
 def _status_farbe(status: str) -> int:
-    mapping = {
-        "eingereicht": "🟡", "genehmigt": "🟢", "abgelehnt": "🔴",
-        "verlaengert": "🔵", "aktiv": "🟣", "beendet": "⚫",
-    }
-    return config.STATUS_FARBEN.get(mapping.get(status, "🟡"), config.FARBE_WARNUNG)
+    return sc.status_farbe(_STATUS_FARBEN.get(status, "gelb"))
 
 
 def _jetzt() -> str:
@@ -114,16 +100,18 @@ def _abwesenheit_id_aus_footer(embed: discord.Embed) -> str | None:
 
 
 def _abwesend_rolle(guild: discord.Guild) -> discord.Role | None:
-    rolle = discord.utils.get(guild.roles, name=get_setting("rolle_abwesend"))
+    name = sc.rolle("abwesend")
+    rolle = discord.utils.get(guild.roles, name=name)
     if rolle is None:
-        log.warning("Abwesenheits-Rolle nicht gefunden: %s", get_setting("rolle_abwesend"))
+        log.warning("Abwesenheits-Rolle nicht gefunden: %s", name)
     return rolle
 
 
 def _team_rolle(member: discord.Member) -> str:
     """Höchste Team-Rolle des Members für die Anzeige."""
-    for name in config.TEAM_ROLLEN:
-        if name in {r.name for r in member.roles}:
+    namen = {r.name for r in member.roles}
+    for name in sc.hierarchie():
+        if name in namen:
             return name
     return "Team"
 
@@ -219,10 +207,12 @@ class AbwesenheitDatenModal(discord.ui.Modal, title="💤 Abwesenheit melden"):
 
 
 def _uebergabe_frage_embed(daten: AbwesenheitDaten) -> discord.Embed:
-    embed = discord.Embed(title="📋 Aufgabenübergabe", color=config.FARBE_INFO)
+    min_w = sc.wert("abwesenheit", "min_woerter") or 50
+    max_w = sc.wert("abwesenheit", "max_woerter") or 250
+    embed = discord.Embed(title="📋 Aufgabenübergabe", color=sc.farbe("info"))
     embed.description = (
         "Ist während deiner Abwesenheit eine **Aufgabenübergabe** erforderlich?\n\n"
-        "Falls ja, beschreibe bitte in **50–250 Wörtern**:\n"
+        f"Falls ja, beschreibe bitte in **{min_w}–{max_w} Wörtern**:\n"
         "• Welche Aufgaben\n• Bis wann sie erledigt werden müssen\n"
         "• Wer sie übernimmt\n• Wichtige Informationen"
     )
@@ -262,11 +252,13 @@ class UebergabeModal(discord.ui.Modal, title="📋 Aufgabenübergabe (50–250 W
         self.daten = daten
 
     async def on_submit(self, interaction: discord.Interaction):
+        min_w = sc.wert("abwesenheit", "min_woerter") or 50
+        max_w = sc.wert("abwesenheit", "max_woerter") or 250
         worte = _zaehle_woerter(str(self.text.value))
-        if worte < 50 or worte > 250:
+        if worte < min_w or worte > max_w:
             await interaction.response.send_message(
                 f"⚠️ Dein Übergabe-Text enthält **{worte} Wörter**. "
-                "Erlaubt sind **50–250 Wörter**. Bitte über den Button erneut versuchen.",
+                f"Erlaubt sind **{min_w}–{max_w} Wörter**. Bitte über den Button erneut versuchen.",
                 ephemeral=True,
             )
             return
@@ -283,7 +275,7 @@ class UebergabeModal(discord.ui.Modal, title="📋 Aufgabenübergabe (50–250 W
 # ---------------------------------------------------------------------------
 
 def _erreichbarkeit_embed(daten: AbwesenheitDaten) -> discord.Embed:
-    embed = discord.Embed(title="📡 Erreichbarkeit", color=config.FARBE_INFO)
+    embed = discord.Embed(title="📡 Erreichbarkeit", color=sc.farbe("info"))
     embed.description = "Bist du während deiner Abwesenheit erreichbar?"
     return embed
 
@@ -369,7 +361,7 @@ def _abwesenheit_embed(daten: AbwesenheitDaten, abwesenheit_id: str, status: str
 
 
 async def _abwesenheit_speichern(interaction: discord.Interaction, daten: AbwesenheitDaten):
-    if not ist_team(interaction.user):
+    if not hat_befehl(interaction.user, "abwesenheit.nutzen"):
         await interaction.response.send_message(
             "⚠️ Das Abwesenheitssystem ist nur für Teammitglieder.", ephemeral=True
         )
@@ -402,7 +394,7 @@ async def _abwesenheit_speichern(interaction: discord.Interaction, daten: Abwese
         await _rolle_vergeben(guild, daten.user_id)
 
     # Panel-Nachricht im Team-Channel (mit Genehmigungs-Buttons bei normalen Anträgen)
-    channel = discord.utils.get(guild.text_channels, name=get_setting("channel_team_abwesenheit"))
+    channel = discord.utils.get(guild.text_channels, name=sc.channel("team_abwesenheit"))
     if channel:
         embed = _abwesenheit_embed(daten, abwesenheit_id, status)
         view = AbwesenheitGenehmigungView() if status == "eingereicht" else None
@@ -420,7 +412,7 @@ async def _abwesenheit_speichern(interaction: discord.Interaction, daten: Abwese
 
     # Log
     tage = (daten.bis - daten.von).days + 1 if daten.bis else None
-    meldepflicht_ab = int(get_setting("abwesenheit_meldepflicht_ab_tagen") or 3)
+    meldepflicht_ab = int(sc.wert("abwesenheit", "meldepflicht_ab_tagen") or 3)
     hinweis = ""
     if tage is not None:
         if tage >= meldepflicht_ab:
@@ -480,9 +472,9 @@ class AbwesenheitGenehmigungView(discord.ui.View):
     @discord.ui.button(label="Genehmigen", emoji="✅", style=discord.ButtonStyle.success,
                        custom_id="abwesenheit_genehmigen")
     async def genehmigen(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if not hat_mindestens(interaction.user, IDX_STELV_LEITUNG):
+        if not hat_befehl(interaction.user, "abwesenheit.genehmigen"):
             await interaction.response.send_message(
-                "⚠️ Nur die Serverleitung kann Abwesenheiten genehmigen.", ephemeral=True
+                "⚠️ Du darfst keine Abwesenheiten genehmigen.", ephemeral=True
             )
             return
         abwesenheit_id = _abwesenheit_id_aus_footer(interaction.message.embeds[0])
@@ -494,9 +486,9 @@ class AbwesenheitGenehmigungView(discord.ui.View):
     @discord.ui.button(label="Ablehnen", emoji="✖️", style=discord.ButtonStyle.danger,
                        custom_id="abwesenheit_ablehnen")
     async def ablehnen(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if not hat_mindestens(interaction.user, IDX_STELV_LEITUNG):
+        if not hat_befehl(interaction.user, "abwesenheit.genehmigen"):
             await interaction.response.send_message(
-                "⚠️ Nur die Serverleitung kann Abwesenheiten ablehnen.", ephemeral=True
+                "⚠️ Du darfst keine Abwesenheiten ablehnen.", ephemeral=True
             )
             return
         abwesenheit_id = _abwesenheit_id_aus_footer(interaction.message.embeds[0])
@@ -655,7 +647,7 @@ async def _user_benachrichtigen(guild: discord.Guild, user_id: int, text: str):
     if not member:
         return
     try:
-        await member.send(embed=discord.Embed(description=text, color=config.FARBE_INFO))
+        await member.send(embed=discord.Embed(description=text, color=sc.farbe("info")))
     except discord.Forbidden:
         pass
 
@@ -707,7 +699,7 @@ class VerlaengerungModal(discord.ui.Modal, title="🔄 Abwesenheit verlängern")
 
         # Neue Panel-Nachricht mit Genehmigungs-Buttons
         channel = discord.utils.get(
-            interaction.guild.text_channels, name=get_setting("channel_team_abwesenheit")
+            interaction.guild.text_channels, name=sc.channel("team_abwesenheit")
         )
         if channel:
             embed = discord.Embed(
@@ -751,12 +743,12 @@ class AbwesenheitPanelView(discord.ui.View):
     @discord.ui.button(label="Abwesenheit melden", emoji="💤", style=discord.ButtonStyle.primary,
                        custom_id="abwesenheit_melden")
     async def melden(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if not ist_team(interaction.user):
+        if not hat_befehl(interaction.user, "abwesenheit.nutzen"):
             await interaction.response.send_message(
                 "⚠️ Das Abwesenheitssystem ist nur für Teammitglieder.", ephemeral=True
             )
             return
-        embed = discord.Embed(title="💤 Grund auswählen", color=config.FARBE_INFO)
+        embed = discord.Embed(title="💤 Grund auswählen", color=sc.farbe("info"))
         embed.description = "Warum bist du abwesend? Dein Grund wird nicht öffentlich angezeigt."
         await interaction.response.send_message(
             embed=embed, view=GrundSelectView(AbwesenheitDaten(interaction.user)), ephemeral=True
@@ -794,7 +786,7 @@ class AbwesenheitPanelView(discord.ui.View):
     @discord.ui.button(label="Kurzfristig abmelden", emoji="🚨", style=discord.ButtonStyle.danger,
                        custom_id="abwesenheit_kurzfristig")
     async def kurzfristig(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if not ist_team(interaction.user):
+        if not hat_befehl(interaction.user, "abwesenheit.nutzen"):
             await interaction.response.send_message(
                 "⚠️ Das Abwesenheitssystem ist nur für Teammitglieder.", ephemeral=True
             )
@@ -819,7 +811,7 @@ async def _meine_abwesenheit(interaction: discord.Interaction):
     ).fetchall()
     conn.close()
 
-    embed = discord.Embed(title="📅 Meine Abwesenheiten", color=config.FARBE_INFO)
+    embed = discord.Embed(title="📅 Meine Abwesenheiten", color=sc.farbe("info"))
     if not aktiv:
         embed.description = "Du hast aktuell keine aktive Abwesenheit. 🎉"
     else:
@@ -857,7 +849,7 @@ async def _rueckkehr_melden(interaction: discord.Interaction):
     await _rolle_entfernen(guild, interaction.user.id)
 
     # Teamleitung informieren
-    channel = discord.utils.get(guild.text_channels, name=get_setting("channel_team_abwesenheit"))
+    channel = discord.utils.get(guild.text_channels, name=sc.channel("team_abwesenheit"))
     if channel:
         embed = discord.Embed(
             title=f"✅ Rückkehr gemeldet: {row['abwesenheit_id']}",
@@ -888,7 +880,7 @@ async def _rueckkehr_melden(interaction: discord.Interaction):
 
 async def _uebersicht_aktualisieren(guild: discord.Guild):
     channel = discord.utils.get(
-        guild.text_channels, name=get_setting("channel_abwesenheitsuebersicht")
+        guild.text_channels, name=sc.channel("abwesenheitsuebersicht")
     )
     if not channel:
         return
@@ -900,7 +892,7 @@ async def _uebersicht_aktualisieren(guild: discord.Guild):
     ).fetchall()
     conn.close()
 
-    embed = discord.Embed(title="💤 Aktuelle Abwesenheiten", color=config.FARBE_INFO)
+    embed = discord.Embed(title="💤 Aktuelle Abwesenheiten", color=sc.farbe("info"))
     if not rows:
         embed.description = "Aktuell ist niemand abwesend. 🎉"
     else:
@@ -948,18 +940,19 @@ class Abwesenheit(commands.Cog):
     abwesenheit_group = app_commands.Group(name="abwesenheit", description="Team-Abwesenheitssystem")
 
     @abwesenheit_group.command(name="panel", description="Postet das Abwesenheits-Panel in diesen Channel")
-    @app_commands.checks.has_permissions(administrator=True)
+    @benoetigt_befehl("abwesenheit.panel")
     async def panel(self, interaction: discord.Interaction):
+        meldepflicht_ab = sc.wert("abwesenheit", "meldepflicht_ab_tagen") or 3
         embed = discord.Embed(
             title="💤 Team-Abwesenheit",
             description=(
                 "Du bist mehrere Tage nicht verfügbar?\n"
                 "Melde deine Abwesenheit hier an.\n"
                 "Private Details sind nicht erforderlich.\n\n"
-                "**Ab 3 Kalendertagen** soll eine Abwesenheit grundsätzlich gemeldet werden. "
+                f"**Ab {meldepflicht_ab} Kalendertagen** soll eine Abwesenheit grundsätzlich gemeldet werden. "
                 "Kürzere Abwesenheiten können freiwillig gemeldet werden."
             ),
-            color=config.FARBE_INFO,
+            color=sc.farbe("info"),
         )
         await interaction.channel.send(embed=embed, view=AbwesenheitPanelView())
         await interaction.response.send_message("✅ Abwesenheits-Panel gepostet.", ephemeral=True)
@@ -974,7 +967,7 @@ class Abwesenheit(commands.Cog):
     @tasks.loop(minutes=1)
     async def abwesenheits_check(self):
         heute = datetime.date.today()
-        erinnerung_vor = int(get_setting("abwesenheit_erinnerung_vor_tagen") or 1)
+        erinnerung_vor = int(sc.wert("abwesenheit", "erinnerung_vor_tagen") or 1)
 
         for guild in self.bot.guilds:
             conn = get_connection()
@@ -995,7 +988,7 @@ class Abwesenheit(commands.Cog):
                     await log_abwesenheit(
                         guild, title=f"🟣 Abwesenheit aktiv: {r['abwesenheit_id']}",
                         description=f"<@{r['user_id']}> ist ab heute abwesend (bis {_format_datum(bis)}). "
-                                    f"Die Rolle {get_setting('rolle_abwesend')} wurde vergeben.",
+                                    f"Die Rolle {sc.rolle('abwesend')} wurde vergeben.",
                         farbe=_status_farbe("aktiv"),
                     )
                     continue

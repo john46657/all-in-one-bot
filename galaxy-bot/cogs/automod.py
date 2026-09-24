@@ -1,10 +1,12 @@
 """
 AutoMod: Spam-Schutz, Mention-Spam-Schutz, Link-/Einladungs-Schutz.
 
-Regeln sind über die Settings anpassbar:
-- automod_spam_nachrichten / automod_spam_zeitfenster / automod_spam_timeout_ab
-- automod_mention_max
-- automod_link_blocken
+Regeln stehen in server_config.json (Abschnitt "automod") und können live
+mit /einstellungen automod angepasst werden:
+- spam_nachrichten / spam_zeitfenster / spam_timeout_ab
+- mention_max
+- link_blocken
+- timeout_minuten
 
 Eskalation: nach wiederholten Verstößen greift automatisch ein Timeout.
 Alle Aktionen werden in den Mod- und Punishment-Logs protokolliert.
@@ -18,9 +20,8 @@ from collections import defaultdict, deque
 import discord
 from discord.ext import commands
 
-import config
+import server_config as sc
 from database import get_connection
-from settings import get_setting
 from logging_utils import log_mod, log_punishment
 
 log = logging.getLogger("galaxy.automod")
@@ -28,11 +29,16 @@ log = logging.getLogger("galaxy.automod")
 _EINLADUNGS_REGEX = re.compile(r"(discord\.gg/|discord\.com/invite/)", re.IGNORECASE)
 
 
-def _setting_int(key: str, default: int) -> int:
+def _automod_int(key: str, standard: int) -> int:
     try:
-        return int(get_setting(key))
+        return int(sc.wert("automod", key))
     except (TypeError, ValueError):
-        return default
+        return standard
+
+
+def _automod_bool(key: str, standard: bool) -> bool:
+    wert = sc.wert("automod", key)
+    return bool(wert) if wert is not None else standard
 
 
 def _jetzt() -> str:
@@ -53,8 +59,8 @@ class AutoMod(commands.Cog):
         verausstoss = None
 
         # 1) Spam: zu viele Nachrichten im Zeitfenster
-        spam_grenze = _setting_int("automod_spam_nachrichten", config.AUTOMOD["spam_nachrichten"])
-        fenster = _setting_int("automod_spam_zeitfenster", config.AUTOMOD["spam_zeitfenster"])
+        spam_grenze = _automod_int("spam_nachrichten", 6)
+        fenster = _automod_int("spam_zeitfenster", 5)
         jetzt = message.created_at.timestamp()
         historie = self.nachrichten[message.author.id]
         historie.append((jetzt, message.channel.id))
@@ -64,13 +70,13 @@ class AutoMod(commands.Cog):
             verausstoss = "spam"
 
         # 2) Mention-Spam
-        mention_max = _setting_int("automod_mention_max", config.AUTOMOD["mention_max"])
+        mention_max = _automod_int("mention_max", 4)
         anzahl_mentions = len(message.mentions) + len(message.role_mentions)
         if anzahl_mentions > mention_max:
             verausstoss = "mention-spam"
 
         # 3) Link-/Einladungs-Schutz
-        link_blocken = get_setting("automod_link_blocken") == "1"
+        link_blocken = _automod_bool("link_blocken", True)
         if link_blocken and _EINLADUNGS_REGEX.search(message.content or ""):
             verausstoss = "einladung"
 
@@ -103,10 +109,10 @@ class AutoMod(commands.Cog):
         )
 
         # Automatischer Timeout ab X Verstößen
-        timeout_ab = _setting_int("automod_spam_timeout_ab", config.AUTOMOD["spam_timeout_ab"])
+        timeout_ab = _automod_int("spam_timeout_ab", 3)
         if anzahl >= timeout_ab:
             try:
-                bis = discord.utils.utcnow() + datetime.timedelta(minutes=10)
+                bis = discord.utils.utcnow() + datetime.timedelta(minutes=_automod_int("timeout_minuten", 10))
                 await message.author.timeout(bis, reason=f"AutoMod: {verrausstoss} (x{anzahl})")
                 await log_punishment(
                     message.guild,

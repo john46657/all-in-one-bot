@@ -1,9 +1,10 @@
 """
 Moderation: Verwarnungen, Timeout, Kick, Ban.
 
-Berechtigungen (nach Team-Hierarchie, siehe checks.py):
-- /warn, /warnungen, /timeout  → ab 🔨 Moderation
-- /kick, /ban                   → ab 🔧 Administration
+Berechtigungen werden über server_config.json (Abschnitt "berechtigungen")
+gelöst und können mit /einstellungen berechtigung live angepasst werden:
+- /warn, /warnungen, /timeout  → moderation.*
+- /kick, /ban                   → moderation.*
 
 Alle Aktionen landen in den Punishment-Logs, Verwarnungen zusätzlich im
 internen Verwarnungen-Channel des Teams.
@@ -16,10 +17,9 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-import config
-from checks import benoetigt_moderation, benoetigt_administration
+import server_config as sc
+from checks import benoetigt_befehl
 from database import get_connection
-from settings import get_setting
 from logging_utils import log_punishment, log_mod
 
 log = logging.getLogger("galaxy.moderation")
@@ -41,7 +41,7 @@ def _darf_bestaft_werden(moderator: discord.Member, ziel: discord.Member) -> boo
 
 async def _benachrichtige_user(ziel: discord.Member, titel: str, text: str):
     try:
-        await ziel.send(embed=discord.Embed(title=titel, description=text, color=config.FARBE_FEHLER))
+        await ziel.send(embed=discord.Embed(title=titel, description=text, color=sc.farbe("fehler")))
     except discord.Forbidden:
         pass  # DMs geschlossen – ignorieren
 
@@ -54,9 +54,9 @@ class Moderation(commands.Cog):
 
     # --- Verwarnung --------------------------------------------------------
 
-    @moderations_group.command(name="warn", description="Verwarnt ein Mitglied (ab 🔨 Moderation)")
+    @moderations_group.command(name="warn", description="Verwarnt ein Mitglied")
     @app_commands.describe(mitglied="Das Mitglied", grund="Grund der Verwarnung")
-    @benoetigt_moderation
+    @benoetigt_befehl("moderation.warn")
     async def warn(self, interaction: discord.Interaction, mitglied: discord.Member, grund: str):
         if mitglied.id == interaction.user.id:
             await interaction.response.send_message("⚠️ Du kannst dich nicht selbst verwarnen.", ephemeral=True)
@@ -98,7 +98,7 @@ class Moderation(commands.Cog):
 
     @moderations_group.command(name="warnungen", description="Zeigt alle Verwarnungen eines Mitglieds")
     @app_commands.describe(mitglied="Das Mitglied")
-    @benoetigt_moderation
+    @benoetigt_befehl("moderation.warnungen")
     async def warnungen(self, interaction: discord.Interaction, mitglied: discord.Member):
         conn = get_connection()
         rows = conn.execute(
@@ -109,7 +109,7 @@ class Moderation(commands.Cog):
 
         embed = discord.Embed(
             title=f"⚠️ Verwarnungen – {mitglied.display_name}",
-            color=config.FARBE_WARNUNG,
+            color=sc.farbe("warnung"),
         )
         if not rows:
             embed.description = "Keine Verwarnungen. ✅"
@@ -127,13 +127,13 @@ class Moderation(commands.Cog):
 
     # --- Timeout -----------------------------------------------------------
 
-    @moderations_group.command(name="timeout", description="Schickt ein Mitglied in den Timeout (ab 🔨 Moderation)")
+    @moderations_group.command(name="timeout", description="Schickt ein Mitglied in den Timeout")
     @app_commands.describe(
         mitglied="Das Mitglied",
         dauer="Dauer, z. B. '10m', '1h', '2h30m', '1d'",
         grund="Grund (optional)",
     )
-    @benoetigt_moderation
+    @benoetigt_befehl("moderation.timeout")
     async def timeout(self, interaction: discord.Interaction, mitglied: discord.Member, dauer: str, grund: str = ""):
         if not _darf_bestaft_werden(interaction.user, mitglied):
             await interaction.response.send_message(
@@ -183,9 +183,9 @@ class Moderation(commands.Cog):
 
     # --- Kick --------------------------------------------------------------
 
-    @moderations_group.command(name="kick", description="Kickt ein Mitglied (ab 🔧 Administration)")
+    @moderations_group.command(name="kick", description="Kickt ein Mitglied")
     @app_commands.describe(mitglied="Das Mitglied", grund="Grund (optional)")
-    @benoetigt_administration
+    @benoetigt_befehl("moderation.kick")
     async def kick(self, interaction: discord.Interaction, mitglied: discord.Member, grund: str = ""):
         if not _darf_bestaft_werden(interaction.user, mitglied):
             await interaction.response.send_message(
@@ -224,13 +224,13 @@ class Moderation(commands.Cog):
 
     # --- Ban ---------------------------------------------------------------
 
-    @moderations_group.command(name="ban", description="Bannt ein Mitglied (ab 🔧 Administration)")
+    @moderations_group.command(name="ban", description="Bannt ein Mitglied")
     @app_commands.describe(
         mitglied="Das Mitglied",
         grund="Grund (optional)",
         nachrichten_loeschen="Nachrichten der letzten Tage löschen (0-7)",
     )
-    @benoetigt_administration
+    @benoetigt_befehl("moderation.ban")
     async def ban(
         self,
         interaction: discord.Interaction,

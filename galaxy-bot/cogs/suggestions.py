@@ -17,16 +17,16 @@ import discord
 from discord import app_commands
 from discord.ext import commands, tasks
 
-import config
-from checks import hat_mindestens, IDX_ADMINISTRATION, IDX_MODERATION
+import server_config as sc
+from checks import hat_befehl, benoetigt_befehl
 from database import get_connection
 
 log = logging.getLogger("galaxy.vorschlaege")
 
 VORSCHLAG_STATUS = {
-    "offen": ("🟡 Offen", config.FARBE_WARNUNG),
-    "angenommen": ("🟢 Angenommen", config.FARBE_ERFOLG),
-    "abgelehnt": ("🔴 Abgelehnt", config.FARBE_FEHLER),
+    "offen": ("🟡 Offen", sc.farbe("warnung")),
+    "angenommen": ("🟢 Angenommen", sc.farbe("erfolg")),
+    "abgelehnt": ("🔴 Abgelehnt", sc.farbe("fehler")),
 }
 UMFRAGEN_EMOJIS = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"]
 
@@ -52,7 +52,7 @@ class VorschlagModal(discord.ui.Modal, title="💡 Vorschlag einreichen"):
 
 async def _vorschlag_speichern(interaction: discord.Interaction, titel: str, beschreibung: str):
     channel = interaction.channel
-    embed = discord.Embed(title=f"💡 {titel}", description=beschreibung, color=config.FARBE_WARNUNG)
+    embed = discord.Embed(title=f"💡 {titel}", description=beschreibung, color=sc.farbe("warnung"))
     embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.display_avatar.url)
     embed.set_footer(text="Vorschlag – stimme mit 👍 / 👎 ab")
     nachricht = await channel.send(embed=embed, view=VorschlagAbstimmungView())
@@ -93,9 +93,9 @@ class VorschlagAbstimmungView(discord.ui.View):
 
 
 async def _vorschlag_status_setzen(interaction: discord.Interaction, status: str):
-    if not hat_mindestens(interaction.user, IDX_ADMINISTRATION):
+    if not hat_befehl(interaction.user, "vorschlag.bewerten"):
         await interaction.response.send_message(
-            "⚠️ Nur Team-Mitglieder ab 🔧 Administration können Vorschläge bewerten.", ephemeral=True
+            "⚠️ Du darfst Vorschläge nicht bewerten.", ephemeral=True
         )
         return
 
@@ -184,9 +184,9 @@ class UmfrageView(discord.ui.View):
         await interaction.response.send_message("✅ Deine Stimme wurde gezählt.", ephemeral=True)
 
     async def _beenden(self, interaction: discord.Interaction):
-        if not hat_mindestens(interaction.user, IDX_MODERATION):
+        if not hat_befehl(interaction.user, "umfrage.beenden"):
             await interaction.response.send_message(
-                "⚠️ Nur Team-Mitglieder ab 🔨 Moderation können Umfragen beenden.", ephemeral=True
+                "⚠️ Du darfst diese Umfrage nicht beenden.", ephemeral=True
             )
             return
         await _umfrage_beenden(interaction.guild, interaction, self.umfrage_id)
@@ -224,7 +224,7 @@ async def _umfrage_beenden(guild: discord.Guild, interaction: discord.Interactio
     embed = discord.Embed(
         title=f"🏁 Umfrage beendet: {umfrage['frage']}",
         description=f"**{gesamt}** Stimme(n) insgesamt:\n\n{text}",
-        color=config.FARBE_ERFOLG,
+        color=sc.farbe("erfolg"),
     )
     embed.set_footer(text=f"Umfrage-ID: {umfrage_id}")
 
@@ -271,7 +271,7 @@ class Vorschlaege(commands.Cog):
     vorschlag_group = app_commands.Group(name="vorschlag", description="Vorschlags-System")
 
     @vorschlag_group.command(name="panel", description="Postet das Vorschlags-Panel in diesen Channel")
-    @app_commands.checks.has_permissions(administrator=True)
+    @benoetigt_befehl("vorschlag.panel")
     async def panel(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="💡 Vorschläge",
@@ -280,7 +280,7 @@ class Vorschlaege(commands.Cog):
                 "Klicke auf den Button unten, reiche deinen Vorschlag ein und die Community "
                 "kann mit 👍 / 👎 abstimmen. Das Team entscheidet dann über die Umsetzung."
             ),
-            color=config.FARBE_INFO,
+            color=sc.farbe("info"),
         )
         await interaction.channel.send(embed=embed, view=VorschlagPanelView())
         await interaction.response.send_message("✅ Vorschlags-Panel gepostet.", ephemeral=True)
@@ -291,7 +291,7 @@ class Vorschlaege(commands.Cog):
         optionen="Antworten, getrennt durch | (z. B. 'Ja|Nein|Vielleicht')",
         laufzeit_stunden="Wie lange läuft die Umfrage? (Standard 24)",
     )
-    @app_commands.checks.has_permissions(manage_messages=True)
+    @benoetigt_befehl("umfrage.starten")
     async def umfrage(
         self,
         interaction: discord.Interaction,
@@ -319,7 +319,7 @@ class Vorschlaege(commands.Cog):
                 "\n".join(f"{UMFRAGEN_EMOJIS[i]} **{o}**" for i, o in enumerate(liste))
                 + f"\n\n⏱️ Läuft bis {discord.utils.format_dt(ablauf, 'R')}"
             ),
-            color=config.FARBE_INFO,
+            color=sc.farbe("info"),
         )
         embed.set_footer(text=f"Umfrage-ID: {umfrage_id}")
         nachricht = await interaction.channel.send(embed=embed, view=UmfrageView(umfrage_id, option_objekte))

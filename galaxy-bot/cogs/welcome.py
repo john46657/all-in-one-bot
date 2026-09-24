@@ -1,8 +1,8 @@
 """
 Welcome-System.
 
-- Neue Mitglieder erhalten die Rolle "🆕 Neuer Bürger".
-- Willkommensnachricht im 👋・willkommen Channel.
+- Neue Mitglieder erhalten die Rolle "🆕 Neuer Bürger" (konfigurierbar).
+- Willkommensnachricht im Willkommens-Channel (Text konfigurierbar).
 - Join/Leave werden in den Member-Logs protokolliert.
 """
 
@@ -12,7 +12,7 @@ import discord
 from discord.ext import commands
 
 import config
-from settings import get_setting
+import server_config as sc
 from logging_utils import log_member
 
 log = logging.getLogger("galaxy.welcome")
@@ -23,7 +23,7 @@ class Welcome(commands.Cog):
         self.bot = bot
 
     async def _rolle(self, guild: discord.Guild, key: str) -> discord.Role | None:
-        name = get_setting(key)
+        name = sc.rolle(key)
         rolle = discord.utils.get(guild.roles, name=name)
         if rolle is None:
             log.warning("Rolle nicht gefunden: %s", name)
@@ -34,7 +34,7 @@ class Welcome(commands.Cog):
         guild = member.guild
 
         # Neuer-Bürger-Rolle vergeben
-        rolle = await self._rolle(guild, "rolle_neuer_buerger")
+        rolle = await self._rolle(guild, "neuer_buerger")
         if rolle:
             try:
                 await member.add_roles(rolle, reason="Neues Mitglied beigetreten")
@@ -42,12 +42,12 @@ class Welcome(commands.Cog):
                 log.warning("Keine Rechte, %s zu vergeben.", rolle.name)
 
         # Willkommensnachricht
-        channel = discord.utils.get(guild.text_channels, name=get_setting("channel_willkommen"))
+        channel = discord.utils.get(guild.text_channels, name=sc.channel("willkommen"))
         if channel:
             embed = discord.Embed(
                 title=f"👋 Willkommen, {member.display_name}!",
-                description=config.WILLKOMMENS_TEXT,
-                color=config.FARBE_INFO,
+                description=sc.wert("willkommen", "text") or config.WILLKOMMENS_TEXT,
+                color=sc.farbe("info"),
             )
             embed.set_thumbnail(url=member.display_avatar.url)
             embed.set_footer(text=f"{member.guild.member_count} Mitglieder")

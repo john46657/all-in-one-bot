@@ -1,8 +1,8 @@
 """
 Ticket-System.
 
-Panel in 🎫・ticket-erstellen mit einem Auswahlmenü für die 6 Ticketarten:
-  🎫 Support · 📋 Bewerbung · ⚠️ Spieler melden · 🐛 Bug melden · 💡 Vorschlag · 🤝 Partnerschaft
+Panel in 🎫・ticket-erstellen mit einem Auswahlmenü für die Ticketarten
+(konfigurierbar in server_config.json, Abschnitt "tickets").
 
 Tickets sind ausschließlich für den Ersteller und das zuständige Team sichtbar.
 """
@@ -14,21 +14,22 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-import config
-from checks import benoetigt_support
+import server_config as sc
+from checks import benoetigt_befehl
+from config import IDX_SUPPORT
 from database import get_connection
-from settings import get_setting
 from logging_utils import log_mod
 
 log = logging.getLogger("galaxy.tickets")
 
+# Ticketarten aus server_config.json (farbe als int).
 TICKET_TYPEN = {
-    "support": {"emoji": "🎫", "label": "Support", "farbe": 0x3498DB},
-    "bewerbung": {"emoji": "📋", "label": "Bewerbung", "farbe": 0xF1C40F},
-    "spieler_meldung": {"emoji": "⚠️", "label": "Spieler melden", "farbe": 0xE67E22},
-    "bug_meldung": {"emoji": "🐛", "label": "Bug melden", "farbe": 0xE74C3C},
-    "vorschlag": {"emoji": "💡", "label": "Vorschlag", "farbe": 0x2ECC71},
-    "partnerschaft": {"emoji": "🤝", "label": "Partnerschaft", "farbe": 0x9B59B6},
+    t["id"]: {
+        "emoji": t["emoji"],
+        "label": t["label"],
+        "farbe": sc.hex_zu_int(t.get("farbe")),
+    }
+    for t in sc.ticket_typen()
 }
 
 
@@ -87,8 +88,8 @@ async def _ticket_erstellen(interaction: discord.Interaction, typ_key: str):
     conn.commit()
     conn.close()
 
-    kategorie = discord.utils.get(guild.categories, name=get_setting("kategorie_tickets"))
-    support_rolle = discord.utils.get(guild.roles, name=get_setting("rolle_support"))
+    kategorie = discord.utils.get(guild.categories, name=sc.channel("kategorie_tickets"))
+    support_rolle = discord.utils.get(guild.roles, name=sc.rolle_by_index(IDX_SUPPORT))
 
     overwrites = {
         guild.default_role: discord.PermissionOverwrite(view_channel=False),
@@ -152,7 +153,7 @@ class TicketSchliessenView(discord.ui.View):
             embed=discord.Embed(
                 title="🔒 Ticket wird geschlossen",
                 description="Dieses Ticket wird in 5 Sekunden geschlossen.",
-                color=config.FARBE_NEUTRAL,
+                color=sc.farbe("neutral"),
             )
         )
         await _ticket_schliessen(interaction.channel, interaction.user)
@@ -200,27 +201,25 @@ class Tickets(commands.Cog):
     ticket_group = app_commands.Group(name="ticket", description="Ticket-System")
 
     @ticket_group.command(name="panel", description="Postet das Ticket-Panel in diesen Channel")
-    @app_commands.checks.has_permissions(administrator=True)
+    @benoetigt_befehl("ticket.panel")
     async def panel(self, interaction: discord.Interaction):
+        auswahl = "\n".join(
+            f"{t['emoji']} **{t['label']}**" for t in TICKET_TYPEN.values()
+        )
         embed = discord.Embed(
             title="🎫 Brauchst du Hilfe?",
             description=(
                 "Wähle unten aus, worum es geht, und wir erstellen dir einen **privaten Channel**, "
                 "in dem nur du und das zuständige Team schreiben können.\n\n"
-                "🎫 **Support** – Allgemeine Fragen\n"
-                "📋 **Bewerbung** – Fragen zu deiner Bewerbung\n"
-                "⚠️ **Spieler melden** – Einen Spieler melden\n"
-                "🐛 **Bug melden** – Einen Fehler melden\n"
-                "💡 **Vorschlag** – Dem Team einen Vorschlag machen\n"
-                "🤝 **Partnerschaft** – Partnerschaft anfragen"
+                + auswahl
             ),
-            color=config.FARBE_INFO,
+            color=sc.farbe("info"),
         )
         await interaction.channel.send(embed=embed, view=TicketPanelView())
         await interaction.response.send_message("✅ Ticket-Panel gepostet.", ephemeral=True)
 
     @ticket_group.command(name="hinzufuegen", description="Fügt einen Nutzer zum aktuellen Ticket hinzu")
-    @benoetigt_support
+    @benoetigt_befehl("ticket.hinzufuegen")
     async def hinzufuegen(self, interaction: discord.Interaction, nutzer: discord.Member):
         conn = get_connection()
         row = conn.execute("SELECT ticket_id FROM tickets WHERE channel_id = ?", (interaction.channel.id,)).fetchone()

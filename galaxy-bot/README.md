@@ -101,23 +101,30 @@ Alle Daten bleiben im Browser (localStorage).
 
 ## ⚙️ Konfiguration
 
-Alle Channel-/Rollen-Namen liegen in `config.py` und können zur Laufzeit
-über die Settings (Datenbank-Tabelle `config`) überschrieben werden –
-siehe `settings.py`. AutoMod-Grenzen und Abwesenheits-Regeln sind dort
-ebenfalls anpassbar.
+Alle Channel-/Rollen-Namen, Farben, AutoMod-Grenzen, Abwesenheits-Regeln und
+Berechtigungen liegen in `server_config.json`. Ändern kann man sie:
+
+1. per Hand in der Datei (danach `/einstellungen neu_laden`)
+2. live aus Discord heraus mit `/einstellungen ...` (Channel, Rolle,
+   Berechtigung, AutoMod, Abwesenheit, Willkommenstext) – greift sofort,
+   ohne Neustart
+
+`config.py` ist nur eine Dünnschicht darauf; im Code bitte `server_config`
+nutzen.
 
 ## 🗂️ Struktur
 
 ```
 galaxy-bot/
 ├── bot.py                  # Einstiegspunkt
-├── config.py               # Channel-/Rollen-Namen, Farben, Standardwerte
+├── config.py               # Dünnschicht über server_config.json
+├── server_config.py        # Lese/Schreib-Zugriff auf server_config.json
+├── server_config.json      # gesamte Server-Konfiguration (live anpassbar)
 ├── database.py             # SQLite (data/galaxy.db)
-├── settings.py             # Laufzeit-Konfiguration (DB-Overrides)
 ├── checks.py               # Team-Hierarchie / Berechtigungen
 ├── logging_utils.py        # Zentrale Log-Helfer
 ├── dashboard.html          # Offline-Test-Dashboard (Browser)
 ├── requirements.txt
 ├── tests/test_logik.py     # Logik-Tests
-└── cogs/                   # 7 Module (siehe oben)
+└── cogs/                   # 8 Module (siehe oben)
 ```

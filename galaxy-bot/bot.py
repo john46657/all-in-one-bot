@@ -45,6 +45,7 @@ class GalaxyBot(commands.Bot):
             "cogs.suggestions",
             "cogs.absence",
             "cogs.logs",
+            "cogs.settings",
         ]
         for cog in cogs:
             try:

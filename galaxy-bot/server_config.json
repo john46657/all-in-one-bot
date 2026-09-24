@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "rollen": {
+    "hierarchie": [
+      "👑 Serverleitung",
+      "🛡️ Stellvertretende Serverleitung",
+      "💼 Management",
+      "🔧 Administration",
+      "🔨 Moderation",
+      "🎫 Support",
+      "📋 Bewerbungsteam",
+      "🎭 Fraktionsverwaltung",
+      "🎮 Event-Team",
+      "📢 Social-Media-Team",
+      "🎥 Content Creator"
+    ],
+    "abwesend": "💤 Abwesend",
+    "neuer_buerger": "🆕 Neuer Bürger",
+    "mitglied": "👤 Mitglied",
+    "bots": "🤖 Bots"
+  },
+  "berechtigungen": {
+    "moderation.warn": "🔨 Moderation",
+    "moderation.warnungen": "🔨 Moderation",
+    "moderation.timeout": "🔨 Moderation",
+    "moderation.kick": "🔧 Administration",
+    "moderation.ban": "🔧 Administration",
+    "ticket.panel": "👑 Serverleitung",
+    "ticket.hinzufuegen": "🎫 Support",
+    "ticket.transkript": "🎫 Support",
+    "vorschlag.panel": "👑 Serverleitung",
+    "vorschlag.bewerten": "🔧 Administration",
+    "umfrage.starten": "🔨 Moderation",
+    "umfrage.beenden": "🔨 Moderation",
+    "abwesenheit.nutzen": "*",
+    "abwesenheit.panel": "👑 Serverleitung",
+    "abwesenheit.genehmigen": "🛡️ Stellvertretende Serverleitung",
+    "einstellungen.verwalten": "👑 Serverleitung"
+  },
+  "channels": {
+    "willkommen": "👋・willkommen",
+    "ankuendigungen": "📢・ankündigungen",
+    "ticket_erstellen": "🎫・ticket-erstellen",
+    "vorschlaege": "💡・vorschläge",
+    "umfragen": "🗳️・umfragen",
+    "team_abwesenheit": "📅・team-abwesenheit",
+    "abwesenheitsuebersicht": "📅・abwesenheitsübersicht",
+    "kategorie_tickets": "🎫 Tickets",
+    "mod_logs": "📜・mod-logs",
+    "member_logs": "👤・member-logs",
+    "punishment_logs": "🔨・punishment-logs",
+    "role_logs": "🎭・role-logs",
+    "message_logs": "💬・message-logs",
+    "voice_logs": "🎙️・voice-logs",
+    "bot_logs": "🤖・bot-logs",
+    "abwesenheits_logs": "💤・abwesenheits-logs"
+  },
+  "tickets": [
+    {
+      "id": "support",
+      "emoji": "🎫",
+      "label": "Support",
+      "farbe": "3498DB"
+    },
+    {
+      "id": "bewerbung",
+      "emoji": "📋",
+      "label": "Bewerbung",
+      "farbe": "F1C40F"
+    },
+    {
+      "id": "spieler_meldung",
+      "emoji": "⚠️",
+      "label": "Spieler melden",
+      "farbe": "E67E22"
+    },
+    {
+      "id": "bug_meldung",
+      "emoji": "🐛",
+      "label": "Bug melden",
+      "farbe": "E74C3C"
+    },
+    {
+      "id": "vorschlag",
+      "emoji": "💡",
+      "label": "Vorschlag",
+      "farbe": "2ECC71"
+    },
+    {
+      "id": "partnerschaft",
+      "emoji": "🤝",
+      "label": "Partnerschaft",
+      "farbe": "9B59B6"
+    }
+  ],
+  "abwesenheit": {
+    "gruende": [
+      {
+        "label": "Urlaub",
+        "emoji": "🌴"
+      },
+      {
+        "label": "Schule/Ausbildung",
+        "emoji": "🎓"
+      },
+      {
+        "label": "Arbeit",
+        "emoji": "💼"
+      },
+      {
+        "label": "Private Gründe",
+        "emoji": "🔒"
+      },
+      {
+        "label": "Gesundheitliche Gründe",
+        "emoji": "🤒"
+      },
+      {
+        "label": "Technische Probleme",
+        "emoji": "🔧"
+      },
+      {
+        "label": "Sonstiges",
+        "emoji": "📦"
+      },
+      {
+        "label": "Privater Grund",
+        "emoji": "🤫"
+      }
+    ],
+    "erreichbarkeit": [
+      {
+        "id": "erreichbar",
+        "label": "🟢 Erreichbar",
+        "emoji": "🟢"
+      },
+      {
+        "id": "eingeschraenkt",
+        "label": "🟡 Eingeschränkt erreichbar",
+        "emoji": "🟡"
+      },
+      {
+        "id": "nicht_erreichbar",
+        "label": "🔴 Nicht erreichbar",
+        "emoji": "🔴"
+      }
+    ],
+    "meldepflicht_ab_tagen": 3,
+    "erinnerung_vor_tagen": 1,
+    "min_woerter": 50,
+    "max_woerter": 250
+  },
+  "willkommen": {
+    "text": "👋 Willkommen auf unserem Server!\n\nSchön, dass du da bist.\n\nLies dir zuerst unsere Regeln und Serverinformationen durch.\n\nDanach kannst du dich in der Community beteiligen, am RP teilnehmen, eine Bewerbung einreichen oder dich mit anderen Mitgliedern austauschen.\n\nViel Spaß!"
+  },
+  "farben": {
+    "info": "5865F2",
+    "erfolg": "2ECC71",
+    "warnung": "F1C40F",
+    "fehler": "E74C3C",
+    "neutral": "95A5A6",
+    "status": {
+      "gelb": "F1C40F",
+      "blau": "3498DB",
+      "orange": "E67E22",
+      "gruen": "2ECC71",
+      "rot": "E74C3C",
+      "grau": "95A5A6",
+      "lila": "9B59B6"
+    }
+  },
+  "automod": {
+    "spam_nachrichten": 6,
+    "spam_zeitfenster": 5,
+    "spam_timeout_ab": 3,
+    "mention_max": 4,
+    "link_blocken": true,
+    "timeout_minuten": 10
+  },
+  "transkripte": {
+    "channel": "🎫・ticket-archiv",
+    "web_port": 8080,
+    "web_key": ""
+  }
+}
